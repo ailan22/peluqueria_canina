@@ -43,3 +43,56 @@
 {{ range seq 9 4 }}{{ $size := pow 2 . }}{{ $file := replace "images/favicon-##x##.png" "##" $size }}{{ with resources.Get $file }}
 <link rel="icon" type="{{ .MediaType.Type }}" sizes="{{- $size -}}x{{- $size -}}" href="{{ .RelPermalink }}" />{{ end }}{{ end }}
 
+<style>
+button[id^="popover-btn-"] {
+    border-radius: 34px !important;
+    padding: 12px 20px !important;
+    min-height: 48px !important;
+    font-size: 18px !important;
+
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.20) !important;
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        filter 0.25s ease !important;
+}
+
+button[id^="popover-btn-"]:hover {
+     transform: translateY(-3px) !important;
+     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25) !important;
+     }
+     button[id^="popover-btn-"] > div {
+     font-size: 18px !important;
+}
+
+button[id^="popover-btn-"] > div svg {
+    width: 24px !important;
+    height: 24px !important;
+}
+@keyframes koalendar-pulse {
+    0%, 70%, 100% {
+        transform: scale(1);
+    }
+
+    75% {
+        transform: scale(1.05);
+    }
+
+    80% {
+        transform: scale(1);
+    }
+
+    85% {
+        transform: scale(1.05);
+    }
+
+    90% {
+        transform: scale(1);
+    }
+}
+
+button[id^="popover-btn-"] {
+    animation: koalendar-pulse 3s ease-in-out infinite;
+}
+</style>
