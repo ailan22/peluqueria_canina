@@ -3,7 +3,7 @@ baseURL = "https://example.com"
 # This is a "one page"-website, so we do not need these kinds of pages...
 disableKinds = ["section", "taxonomy", "term", "RSS", "robotsTXT"]
 
-defaultContentLanguage = "en"
+defaultContentLanguage = "es"
 
 # The name of this wonderful theme ;-).
 theme = "hugo-scroll"
@@ -102,19 +102,6 @@ enableEmoji = true
     #     value = ""
     #     url = ""
     #     icon = ""
-
-# Define additional languages
-[languages]
-  [languages.en]
-    weight = 10
-    languageName = "English"
-    contentDir = "content/en"
-
-  [languages.de]
-    title = "Erika Musterfrau - Ernährungshilfe & Kochberatung"
-    weight = 20
-    contentDir = "content/de"
-    languageName = "Deutsch"
 
 [markup]
   [markup.goldmark]
