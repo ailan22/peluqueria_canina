@@ -9,7 +9,7 @@ defaultContentLanguage = "en"
 theme = "hugo-scroll"
 
 # The browser tab name
-title = "Jane Doe - Nutrition Coach & Chef Consultant"
+title = "Peluquería Canina - Sitio en construcción"
 
 # In order to add version information in the page's footer set to true.
 # enableGitInfo = true
@@ -27,7 +27,7 @@ enableEmoji = true
     # services like Twitter or Slack want to generate a preview of a link to your site.
     # See https://gohugo.io/templates/internal#twitter-cards and https://gohugo.io/templates/internal#open-graph.
     # NOT the actual header background image, go to _index.md instead
-    images = ["images/cover-image.jpg"]
+    images = ["images/portada.png"]
 
     # When set true, it creates a visual guard (partially transparent rounded box), preventing non-ideal background images from interfering with title/description headings
     # Ideal images are homogenous around the centre and contrasting to the text.
@@ -38,10 +38,10 @@ enableEmoji = true
     # Another "title" :-). This one is used as the site_name on the Hugo's internal
     # opengraph structured data template.
     # See https://ogp.me/ and https://gohugo.io/templates/internal#open-graph.
-    title = "Jane Doe - Nutrition Coach & Chef Consultant"
+    title = "Peluquería Canina - Sitio en construcción"
 
     # The "description" of your website. This is used in the meta data of your generated html.
-    description = "Nutrition Coach & Chef Consultant"
+    description = "Sitio en construcción. ¡Muy pronto tendremos novedades!"
 
     # Show a menu of languages available
     language_menu = true
@@ -111,7 +111,7 @@ enableEmoji = true
     contentDir = "content/en"
 
   [languages.de]
-    title = "Erika Musterfrau - Ernährungshilfe & Kochberatung"
+    title = "Peluquería Canina - Sitio en construcción"
     weight = 20
     contentDir = "content/de"
     languageName = "Deutsch"
