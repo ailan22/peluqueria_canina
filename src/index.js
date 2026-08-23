@@ -10,12 +10,20 @@ function json(data, status = 200) {
 // ---------- Notificación por email ----------
 
 async function sendBookingNotification(env, booking) {
-  if (!env.RESEND_API_KEY || !env.OWNER_EMAIL) return; // no configurado, se omite silenciosamente
+  console.log("sendBookingNotification: iniciando", {
+    tieneApiKey: !!env.RESEND_API_KEY,
+    tieneOwnerEmail: !!env.OWNER_EMAIL,
+  });
+
+  if (!env.RESEND_API_KEY || !env.OWNER_EMAIL) {
+    console.log("sendBookingNotification: falta configuración, se omite el envío");
+    return;
+  }
 
   const { name, email, phone, service, date, time } = booking;
 
   try {
-    await fetch("https://api.resend.com/emails", {
+    const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${env.RESEND_API_KEY}`,
@@ -36,12 +44,16 @@ async function sendBookingNotification(env, booking) {
         `,
       }),
     });
+
+    const responseBody = await res.text();
+    console.log("sendBookingNotification: respuesta de Resend", {
+      status: res.status,
+      body: responseBody,
+    });
   } catch (err) {
-    // Si falla el email, no queremos que falle la reserva ya guardada.
-    console.error("Error enviando email de notificación:", err);
+    console.error("Error enviando email de notificación:", err.message || err);
   }
 }
-
 // ---------- Disponibilidad ----------
 
 function generateSlots(start, end, durationMin) {
