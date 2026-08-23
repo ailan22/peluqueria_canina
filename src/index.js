@@ -7,6 +7,41 @@ function json(data, status = 200) {
   });
 }
 
+// ---------- Notificación por email ----------
+
+async function sendBookingNotification(env, booking) {
+  if (!env.RESEND_API_KEY || !env.OWNER_EMAIL) return; // no configurado, se omite silenciosamente
+
+  const { name, email, phone, service, date, time } = booking;
+
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from: "Reservas <onboarding@resend.dev>",
+        to: [env.OWNER_EMAIL],
+        subject: `Nueva reserva: ${date} ${time} - ${name}`,
+        html: `
+          <h2>Nueva reserva de turno</h2>
+          <p><strong>Cliente:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Teléfono:</strong> ${phone || "-"}</p>
+          <p><strong>Servicio:</strong> ${service}</p>
+          <p><strong>Fecha:</strong> ${date}</p>
+          <p><strong>Hora:</strong> ${time}</p>
+        `,
+      }),
+    });
+  } catch (err) {
+    // Si falla el email, no queremos que falle la reserva ya guardada.
+    console.error("Error enviando email de notificación:", err);
+  }
+}
+
 // ---------- Disponibilidad ----------
 
 function generateSlots(start, end, durationMin) {
@@ -101,6 +136,9 @@ async function handleBook(request, env) {
     }
     return json({ error: "Error al guardar la reserva" }, 500);
   }
+
+  // No bloqueamos la respuesta al cliente si el email tarda o falla.
+  await sendBookingNotification(env, { name: name.trim(), email: email.trim(), phone, service, date, time });
 
   return json({ ok: true, message: "Reserva confirmada", date, time });
 }

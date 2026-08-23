@@ -1,5 +1,4 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "peluqueria-canina",
   "compatibility_date": "2026-08-20",
   "main": "./src/index.js",
@@ -21,5 +20,8 @@
       "database_name": "db-turnos",
       "database_id": "b5c626dd-4a67-40d3-86fa-fff197aefca9"
     }
-  ]
+  ],
+  "vars": {
+    "OWNER_EMAIL": "ailanquinteroh@gmail.com"
+  }
 }
