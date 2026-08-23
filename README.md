@@ -108,9 +108,9 @@ Si ya tenés el repo conectado a Cloudflare Pages vía Git, con hacer push alcan
 
 ## Emails (Resend)
 
-- Al reservar se mandan dos emails: notificación al dueño (`OWNER_EMAIL`) y confirmación al cliente con un link para cancelar (`/cancelar/?token=...`).
+- Al reservar se manda un email de notificación al dueño (`OWNER_EMAIL`), que incluye un link para cancelar el turno (`/cancelar/?token=...`) por si el cliente avisa que no puede asistir.
 - `RESEND_API_KEY` se configura como *secret* en Cloudflare (Settings > Variables and Secrets), nunca en `wrangler.jsonc`.
-- Mientras uses el dominio de prueba `onboarding@resend.dev` (el default), Resend solo entrega al email con el que te registraste — el email al **cliente** no va a llegar en producción hasta que verifiques un dominio propio en Resend y configures la variable `FROM_EMAIL` (ej: `Reservas <reservas@tudominio.com>`).
+- Mientras uses el dominio de prueba `onboarding@resend.dev` (el default), Resend solo entrega al email con el que te registraste — por eso `OWNER_EMAIL` tiene que ser esa misma dirección. Si en algún momento querés mandarle confirmación directo al cliente, vas a necesitar verificar un dominio propio en Resend y una variable `FROM_EMAIL`.
 
 ## Próximos pasos posibles
 

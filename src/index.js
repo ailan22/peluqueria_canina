@@ -39,7 +39,7 @@ async function sendEmail(env, { to, subject, html }) {
   }
 }
 
-async function sendBookingNotification(env, booking) {
+async function sendBookingNotification(env, booking, cancelUrl) {
   if (!env.OWNER_EMAIL) {
     console.log("sendBookingNotification: falta OWNER_EMAIL, se omite el envío");
     return;
@@ -58,23 +58,7 @@ async function sendBookingNotification(env, booking) {
       <p><strong>Servicio:</strong> ${service}</p>
       <p><strong>Fecha:</strong> ${date}</p>
       <p><strong>Hora:</strong> ${time}</p>
-    `,
-  });
-}
-
-async function sendClientConfirmation(env, booking, cancelUrl) {
-  const { name, email, service, date, time } = booking;
-
-  await sendEmail(env, {
-    to: email,
-    subject: `Confirmación de turno: ${date} ${time}`,
-    html: `
-      <h2>¡Turno confirmado!</h2>
-      <p>Hola ${name}, tu turno quedó reservado:</p>
-      <p><strong>Servicio:</strong> ${service}</p>
-      <p><strong>Fecha:</strong> ${date}</p>
-      <p><strong>Hora:</strong> ${time}</p>
-      <p>Si no podés asistir, podés cancelar tu turno acá:</p>
+      <p>Si el cliente avisa que no puede asistir, podés cancelar el turno acá:</p>
       <p><a href="${cancelUrl}">${cancelUrl}</a></p>
     `,
   });
@@ -180,8 +164,7 @@ async function handleBook(request, env) {
   const cancelUrl = `${new URL(request.url).origin}/cancelar/?token=${cancelToken}`;
 
   // No bloqueamos la respuesta al cliente si el email tarda o falla.
-  await sendBookingNotification(env, bookingData);
-  await sendClientConfirmation(env, bookingData, cancelUrl);
+  await sendBookingNotification(env, bookingData, cancelUrl);
 
   return json({ ok: true, message: "Reserva confirmada", date, time });
 }
