@@ -9,7 +9,7 @@ function json(data, status = 200) {
 
 // ---------- Notificación por email ----------
 
-async function sendEmail(env, { to, subject, html }) {
+async function sendEmail(env, { to, subject, html, attachments }) {
   console.log("sendEmail: iniciando", { to, tieneApiKey: !!env.RESEND_API_KEY });
 
   if (!env.RESEND_API_KEY) {
@@ -29,6 +29,7 @@ async function sendEmail(env, { to, subject, html }) {
         to: [to],
         subject,
         html,
+        ...(attachments && attachments.length ? { attachments } : {}),
       }),
     });
 
@@ -39,7 +40,7 @@ async function sendEmail(env, { to, subject, html }) {
   }
 }
 
-async function sendBookingNotification(env, booking, cancelUrl) {
+async function sendBookingNotification(env, booking, cancelUrl, attachments) {
   if (!env.OWNER_EMAIL) {
     console.log("sendBookingNotification: falta OWNER_EMAIL, se omite el envío");
     return;
@@ -61,7 +62,18 @@ async function sendBookingNotification(env, booking, cancelUrl) {
       <p>Si el cliente avisa que no puede asistir, podés cancelar el turno acá:</p>
       <p><a href="${cancelUrl}">${cancelUrl}</a></p>
     `,
+    attachments,
   });
+}
+
+function arrayBufferToBase64(buffer) {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
 }
 // ---------- Disponibilidad ----------
 
@@ -113,15 +125,22 @@ function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+const MAX_PHOTO_BYTES = 5 * 1024 * 1024; // 5MB
+
 async function handleBook(request, env) {
-  let body;
+  let formData;
   try {
-    body = await request.json();
+    formData = await request.formData();
   } catch {
-    return json({ error: "JSON inválido" }, 400);
+    return json({ error: "Formulario inválido" }, 400);
   }
 
-  const { name, email, phone, service, date, time } = body;
+  const name = formData.get("name");
+  const email = formData.get("email");
+  const phone = formData.get("phone");
+  const service = formData.get("service");
+  const date = formData.get("date");
+  const time = formData.get("time");
 
   if (!name || name.trim().length < 2) return json({ error: "Nombre inválido" }, 400);
   if (!email || !isValidEmail(email)) return json({ error: "Email inválido" }, 400);
@@ -146,6 +165,20 @@ async function handleBook(request, env) {
     return json({ error: "Horario fuera de atención" }, 400);
   }
 
+  const photos = [];
+  for (const field of ["photo1", "photo2"]) {
+    const file = formData.get(field);
+    if (file && typeof file === "object" && file.size > 0) {
+      if (!file.type.startsWith("image/")) {
+        return json({ error: "Las fotos deben ser imágenes" }, 400);
+      }
+      if (file.size > MAX_PHOTO_BYTES) {
+        return json({ error: "Cada foto debe pesar menos de 5MB" }, 400);
+      }
+      photos.push(file);
+    }
+  }
+
   const cancelToken = crypto.randomUUID();
 
   try {
@@ -163,8 +196,17 @@ async function handleBook(request, env) {
   const bookingData = { name: name.trim(), email: email.trim(), phone, service, date, time };
   const cancelUrl = `${new URL(request.url).origin}/cancelar/?token=${cancelToken}`;
 
+  const attachments = [];
+  for (let i = 0; i < photos.length; i++) {
+    const buffer = await photos[i].arrayBuffer();
+    attachments.push({
+      filename: photos[i].name || `foto${i + 1}.jpg`,
+      content: arrayBufferToBase64(buffer),
+    });
+  }
+
   // No bloqueamos la respuesta al cliente si el email tarda o falla.
-  await sendBookingNotification(env, bookingData, cancelUrl);
+  await sendBookingNotification(env, bookingData, cancelUrl, attachments);
 
   return json({ ok: true, message: "Reserva confirmada", date, time });
 }

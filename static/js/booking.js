@@ -41,26 +41,39 @@
 
   dateInput.addEventListener("change", loadSlots);
 
+  const MAX_PHOTO_BYTES = 5 * 1024 * 1024; // 5MB
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    const photo1 = form.photo1.files[0];
+    const photo2 = form.photo2.files[0];
+    for (const photo of [photo1, photo2]) {
+      if (photo && photo.size > MAX_PHOTO_BYTES) {
+        statusBox.textContent = "Cada foto debe pesar menos de 5MB";
+        statusBox.className = "booking-error";
+        return;
+      }
+    }
+
     submitBtn.disabled = true;
     statusBox.textContent = "Enviando...";
     statusBox.className = "";
 
-    const payload = {
-      name: form.name.value,
-      email: form.email.value,
-      phone: form.phone.value,
-      service: form.service.value,
-      date: dateInput.value,
-      time: timeSelect.value,
-    };
+    const payload = new FormData();
+    payload.append("name", form.name.value);
+    payload.append("email", form.email.value);
+    payload.append("phone", form.phone.value);
+    payload.append("service", form.service.value);
+    payload.append("date", dateInput.value);
+    payload.append("time", timeSelect.value);
+    if (photo1) payload.append("photo1", photo1);
+    if (photo2) payload.append("photo2", photo2);
 
     try {
       const res = await fetch("/api/book", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: payload,
       });
       const data = await res.json();
 
