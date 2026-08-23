@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   date TEXT NOT NULL,        -- formato YYYY-MM-DD
   time TEXT NOT NULL,        -- formato HH:MM (24h)
   status TEXT NOT NULL DEFAULT 'confirmed', -- confirmed | cancelled
+  cancel_token TEXT,         -- token único para que el cliente cancele su turno
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
@@ -19,3 +20,5 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_slot
   WHERE status = 'confirmed';
 
 CREATE INDEX IF NOT EXISTS idx_date ON bookings (date);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_cancel_token ON bookings (cancel_token);

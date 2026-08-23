@@ -9,18 +9,13 @@ function json(data, status = 200) {
 
 // ---------- Notificación por email ----------
 
-async function sendBookingNotification(env, booking) {
-  console.log("sendBookingNotification: iniciando", {
-    tieneApiKey: !!env.RESEND_API_KEY,
-    tieneOwnerEmail: !!env.OWNER_EMAIL,
-  });
+async function sendEmail(env, { to, subject, html }) {
+  console.log("sendEmail: iniciando", { to, tieneApiKey: !!env.RESEND_API_KEY });
 
-  if (!env.RESEND_API_KEY || !env.OWNER_EMAIL) {
-    console.log("sendBookingNotification: falta configuración, se omite el envío");
+  if (!env.RESEND_API_KEY) {
+    console.log("sendEmail: falta RESEND_API_KEY, se omite el envío");
     return;
   }
-
-  const { name, email, phone, service, date, time } = booking;
 
   try {
     const res = await fetch("https://api.resend.com/emails", {
@@ -30,29 +25,59 @@ async function sendBookingNotification(env, booking) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Reservas <onboarding@resend.dev>",
-        to: [env.OWNER_EMAIL],
-        subject: `Nueva reserva: ${date} ${time} - ${name}`,
-        html: `
-          <h2>Nueva reserva de turno</h2>
-          <p><strong>Cliente:</strong> ${name}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Teléfono:</strong> ${phone || "-"}</p>
-          <p><strong>Servicio:</strong> ${service}</p>
-          <p><strong>Fecha:</strong> ${date}</p>
-          <p><strong>Hora:</strong> ${time}</p>
-        `,
+        from: env.FROM_EMAIL || "Reservas <onboarding@resend.dev>",
+        to: [to],
+        subject,
+        html,
       }),
     });
 
     const responseBody = await res.text();
-    console.log("sendBookingNotification: respuesta de Resend", {
-      status: res.status,
-      body: responseBody,
-    });
+    console.log("sendEmail: respuesta de Resend", { to, status: res.status, body: responseBody });
   } catch (err) {
-    console.error("Error enviando email de notificación:", err.message || err);
+    console.error("Error enviando email:", err.message || err);
   }
+}
+
+async function sendBookingNotification(env, booking) {
+  if (!env.OWNER_EMAIL) {
+    console.log("sendBookingNotification: falta OWNER_EMAIL, se omite el envío");
+    return;
+  }
+
+  const { name, email, phone, service, date, time } = booking;
+
+  await sendEmail(env, {
+    to: env.OWNER_EMAIL,
+    subject: `Nueva reserva: ${date} ${time} - ${name}`,
+    html: `
+      <h2>Nueva reserva de turno</h2>
+      <p><strong>Cliente:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Teléfono:</strong> ${phone || "-"}</p>
+      <p><strong>Servicio:</strong> ${service}</p>
+      <p><strong>Fecha:</strong> ${date}</p>
+      <p><strong>Hora:</strong> ${time}</p>
+    `,
+  });
+}
+
+async function sendClientConfirmation(env, booking, cancelUrl) {
+  const { name, email, service, date, time } = booking;
+
+  await sendEmail(env, {
+    to: email,
+    subject: `Confirmación de turno: ${date} ${time}`,
+    html: `
+      <h2>¡Turno confirmado!</h2>
+      <p>Hola ${name}, tu turno quedó reservado:</p>
+      <p><strong>Servicio:</strong> ${service}</p>
+      <p><strong>Fecha:</strong> ${date}</p>
+      <p><strong>Hora:</strong> ${time}</p>
+      <p>Si no podés asistir, podés cancelar tu turno acá:</p>
+      <p><a href="${cancelUrl}">${cancelUrl}</a></p>
+    `,
+  });
 }
 // ---------- Disponibilidad ----------
 
@@ -137,11 +162,13 @@ async function handleBook(request, env) {
     return json({ error: "Horario fuera de atención" }, 400);
   }
 
+  const cancelToken = crypto.randomUUID();
+
   try {
     await env.DB.prepare(
-      `INSERT INTO bookings (name, email, phone, service, date, time)
-       VALUES (?, ?, ?, ?, ?, ?)`
-    ).bind(name.trim(), email.trim(), phone?.trim() || null, service, date, time).run();
+      `INSERT INTO bookings (name, email, phone, service, date, time, cancel_token)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`
+    ).bind(name.trim(), email.trim(), phone?.trim() || null, service, date, time, cancelToken).run();
   } catch (err) {
     if (String(err.message).includes("UNIQUE")) {
       return json({ error: "Ese horario ya fue reservado, elegí otro" }, 409);
@@ -149,10 +176,57 @@ async function handleBook(request, env) {
     return json({ error: "Error al guardar la reserva" }, 500);
   }
 
+  const bookingData = { name: name.trim(), email: email.trim(), phone, service, date, time };
+  const cancelUrl = `${new URL(request.url).origin}/cancelar/?token=${cancelToken}`;
+
   // No bloqueamos la respuesta al cliente si el email tarda o falla.
-  await sendBookingNotification(env, { name: name.trim(), email: email.trim(), phone, service, date, time });
+  await sendBookingNotification(env, bookingData);
+  await sendClientConfirmation(env, bookingData, cancelUrl);
 
   return json({ ok: true, message: "Reserva confirmada", date, time });
+}
+
+// ---------- Cancelación por parte del cliente ----------
+
+async function handleCancelInfo(request, env) {
+  const url = new URL(request.url);
+  const token = url.searchParams.get("token");
+  if (!token) return json({ error: "Falta token" }, 400);
+
+  const booking = await env.DB.prepare(
+    "SELECT service, date, time, status FROM bookings WHERE cancel_token = ?"
+  ).bind(token).first();
+
+  if (!booking) return json({ error: "Reserva no encontrada" }, 404);
+
+  return json(booking);
+}
+
+async function handleCancel(request, env) {
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return json({ error: "JSON inválido" }, 400);
+  }
+
+  const { token } = body;
+  if (!token) return json({ error: "Falta token" }, 400);
+
+  const booking = await env.DB.prepare(
+    "SELECT status FROM bookings WHERE cancel_token = ?"
+  ).bind(token).first();
+
+  if (!booking) return json({ error: "Reserva no encontrada" }, 404);
+  if (booking.status === "cancelled") {
+    return json({ error: "Esa reserva ya estaba cancelada" }, 409);
+  }
+
+  await env.DB.prepare(
+    "UPDATE bookings SET status = 'cancelled' WHERE cancel_token = ?"
+  ).bind(token).run();
+
+  return json({ ok: true });
 }
 
 // ---------- Administración ----------
@@ -209,6 +283,14 @@ export default {
 
     if (pathname === "/api/bookings" && method === "DELETE") {
       return handleBookingsDelete(request, env);
+    }
+
+    if (pathname === "/api/cancel" && method === "GET") {
+      return handleCancelInfo(request, env);
+    }
+
+    if (pathname === "/api/cancel" && method === "POST") {
+      return handleCancel(request, env);
     }
 
     // Cualquier otra ruta bajo /api/* que no matchee: 404 JSON

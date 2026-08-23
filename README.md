@@ -11,7 +11,9 @@ src/                   -> raíz del repo (Worker script + config del negocio)
 layouts/partials/booking-form.html
 static/js/booking.js
 static/css/booking.css
+static/cancelar/index.html
 schema.sql             -> raíz del repo
+migrations/            -> raíz del repo
 wrangler.jsonc          -> raíz del repo
 ```
 
@@ -104,9 +106,13 @@ Si ya tenés el repo conectado a Cloudflare Pages vía Git, con hacer push alcan
 - D1: 5 GB de almacenamiento, 5M filas leídas/día, 100.000 filas escritas/día — cada reserva es 1 fila escrita, así que soporta miles de turnos/día sin problema.
 - Si en algún momento agregás envío de emails de confirmación, usá un servicio externo (Resend, MailChannels) ya que Cloudflare no tiene SMTP propio gratis integrado.
 
+## Emails (Resend)
+
+- Al reservar se mandan dos emails: notificación al dueño (`OWNER_EMAIL`) y confirmación al cliente con un link para cancelar (`/cancelar/?token=...`).
+- `RESEND_API_KEY` se configura como *secret* en Cloudflare (Settings > Variables and Secrets), nunca en `wrangler.jsonc`.
+- Mientras uses el dominio de prueba `onboarding@resend.dev` (el default), Resend solo entrega al email con el que te registraste — el email al **cliente** no va a llegar en producción hasta que verifiques un dominio propio en Resend y configures la variable `FROM_EMAIL` (ej: `Reservas <reservas@tudominio.com>`).
+
 ## Próximos pasos posibles
 
-- Enviar email de confirmación al reservar (Resend tiene un free tier generoso).
-- Cancelación por parte del cliente vía link único con token.
 - Panel de administración visual en vez de curl/Postman.
 - Reglas de anticipación mínima (ej: no reservar con menos de 2 horas de anticipación).
