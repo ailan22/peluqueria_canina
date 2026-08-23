@@ -1,11 +1,11 @@
 ---
-title: "The Services I Offer"
-header_menu_title: "Services"
-navigation_menu_title: "My Services"
+title: "Servicios"
+header_menu_title: "Servicios"
+navigation_menu_title: "Servicios"
 weight: 2
 header_menu: true
 ---
-
+<!-- 
 Feature notice: This section displays options to customize title:
 
 - has a normal section title (`title` = "The Services I Offer"),
@@ -53,3 +53,4 @@ I can raise your table culture!
 Want to learn more about my services? See [dedicated page](services) with more details.
 [font-awesome-icons]: https://fontawesome.com/icons
 [hugo-shortcodes]: https://gohugo.io/content-management/shortcodes/
+-->
