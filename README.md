@@ -1,18 +1,21 @@
-# Sistema de reservas de turnos — Hugo + Cloudflare Pages + D1
+# Sistema de reservas de turnos — Hugo + Cloudflare Workers (Static Assets) + D1
+
+Nota: este proyecto usa el modelo actual de **Workers con Static Assets**, no el Pages clásico. Es lo que Cloudflare configura por defecto hoy en día. La diferencia principal: la lógica de la API no vive en una carpeta `functions/` con routing automático (eso es exclusivo de Pages) — acá hay un **Worker script real** (`src/index.js`) que actúa de router para `/api/*`, y todo lo demás se sirve directo como archivo estático sin pasar por el Worker.
 
 ## 1. Copiar los archivos a tu proyecto Hugo
 
-Copiá estas carpetas/archivos a la raíz de tu repo (donde ya tenés `config.toml`/`hugo.toml`):
+Copiá estas carpetas/archivos a la raíz de tu repo (donde ya tenés `hugo.toml`):
 
 ```
-functions/            -> raíz del repo (al lado de content/, layouts/, etc.)
+src/                   -> raíz del repo (Worker script + config del negocio)
 layouts/partials/booking-form.html
 static/js/booking.js
 static/css/booking.css
-schema.sql            -> raíz del repo
+schema.sql             -> raíz del repo
+wrangler.jsonc          -> raíz del repo
 ```
 
-Importante: la carpeta `functions/` va en la **raíz del repositorio**, no dentro de `static/` ni de la carpeta de salida `public/`. Cloudflare Pages la detecta automáticamente y la despliega como Pages Functions junto con el sitio estático que genera Hugo.
+Importante: nada de esto va dentro del theme (`themes/tu-theme/...`) ni dentro de `public/` (esa carpeta la genera Hugo en cada build, no se toca a mano).
 
 ## 2. Crear la base de datos D1
 
@@ -22,10 +25,10 @@ Necesitás tener `wrangler` instalado (`npm install -g wrangler`) y estar loguea
 wrangler d1 create db-turnos
 ```
 
-Esto te va a dar un `database_id`. Cloudflare Pages no usa `wrangler.toml` para el binding de D1 en proyectos de Pages con Git — el binding se configura desde el dashboard:
+Esto te va a dar un `database_id`. El binding se configura desde el dashboard:
 
-1. Ve a **Workers & Pages > tu proyecto > Settings > Functions > D1 database bindings**
-2. Agregá un binding:
+1. Ve a **Workers & Pages > tu proyecto > Settings > Bindings**
+2. Agregá un binding tipo **D1 database**:
    - Variable name: `DB`
    - D1 database: `db-turnos`
 
@@ -71,7 +74,7 @@ Y agregá el CSS en tu `<head>` (por ejemplo en tu layout base):
 Todo lo relacionado al negocio (horario de atención, duración de los turnos, lista de servicios, cuántos días para adelante se puede reservar) está centralizado en:
 
 ```
-functions/api/_config.js
+src/config.js
 ```
 
 Si cambiás la lista de `services` ahí, actualizá también las `<option>` en `layouts/partials/booking-form.html`.
