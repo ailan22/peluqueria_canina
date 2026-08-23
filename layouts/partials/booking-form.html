@@ -1,0 +1,45 @@
+<div class="booking-widget">
+  <form id="booking-form">
+    <div class="form-row">
+      <label for="booking-name">Nombre</label>
+      <input type="text" id="booking-name" name="name" required minlength="2" />
+    </div>
+
+    <div class="form-row">
+      <label for="booking-email">Email</label>
+      <input type="email" id="booking-email" name="email" required />
+    </div>
+
+    <div class="form-row">
+      <label for="booking-phone">Teléfono (opcional)</label>
+      <input type="tel" id="booking-phone" name="phone" />
+    </div>
+
+    <div class="form-row">
+      <label for="booking-service">Servicio</label>
+      <select id="booking-service" name="service" required>
+        <option value="">Elegir...</option>
+        <option value="Corte">Corte</option>
+        <option value="Coloración">Coloración</option>
+        <option value="Consulta">Consulta</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <label for="booking-date">Fecha</label>
+      <input type="date" id="booking-date" name="date" required />
+    </div>
+
+    <div class="form-row">
+      <label for="booking-time">Horario</label>
+      <select id="booking-time" name="time" required disabled>
+        <option value="">Elegí una fecha primero</option>
+      </select>
+    </div>
+
+    <button type="submit">Reservar turno</button>
+    <p id="booking-status"></p>
+  </form>
+</div>
+
+<script src="/js/booking.js" defer></script>
