@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   name TEXT NOT NULL,
   email TEXT NOT NULL,
   phone TEXT,
+  race TEXT,
   service TEXT NOT NULL,
   date TEXT NOT NULL,        -- formato YYYY-MM-DD
   time TEXT NOT NULL,        -- formato HH:MM (24h)
