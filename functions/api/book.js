@@ -1,4 +1,4 @@
-import { CONFIG } from "./_config.js";
+import { CONFIG, getDaySlots } from "./_config.js";
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -47,7 +47,7 @@ export async function onRequestPost({ request, env }) {
   // Verificar que el horario esté dentro del horario laboral de ese día
   const dayOfWeek = requestedDateTime.getDay();
   const hours = CONFIG.businessHours[dayOfWeek];
-  if (!hours || time < hours.start || time >= hours.end) {
+  if (!hours || !getDaySlots(hours).includes(time)) {
     return Response.json({ error: "Horario fuera de atención" }, { status: 400 });
   }
 

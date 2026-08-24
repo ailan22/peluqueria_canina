@@ -1,19 +1,4 @@
-import { CONFIG } from "./_config.js";
-
-function generateSlots(start, end, durationMin) {
-  const slots = [];
-  let [h, m] = start.split(":").map(Number);
-  const [endH, endM] = end.split(":").map(Number);
-  while (h < endH || (h === endH && m < endM)) {
-    slots.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
-    m += durationMin;
-    if (m >= 60) {
-      h += Math.floor(m / 60);
-      m = m % 60;
-    }
-  }
-  return slots;
-}
+import { CONFIG, getDaySlots } from "./_config.js";
 
 export async function onRequestGet({ request, env }) {
   const url = new URL(request.url);
@@ -30,7 +15,7 @@ export async function onRequestGet({ request, env }) {
     return Response.json({ date, slots: [] }); // cerrado ese día
   }
 
-  const allSlots = generateSlots(hours.start, hours.end, CONFIG.slotDurationMinutes);
+  const allSlots = getDaySlots(hours, CONFIG.slotDurationMinutes);
 
   // Traer los turnos ya ocupados ese día
   const { results } = await env.DB.prepare(

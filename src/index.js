@@ -1,4 +1,4 @@
-import { CONFIG } from "./config.js";
+import { CONFIG, getDaySlots } from "./config.js";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -78,21 +78,6 @@ function arrayBufferToBase64(buffer) {
 }
 // ---------- Disponibilidad ----------
 
-function generateSlots(start, end, durationMin) {
-  const slots = [];
-  let [h, m] = start.split(":").map(Number);
-  const [endH, endM] = end.split(":").map(Number);
-  while (h < endH || (h === endH && m < endM)) {
-    slots.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
-    m += durationMin;
-    if (m >= 60) {
-      h += Math.floor(m / 60);
-      m = m % 60;
-    }
-  }
-  return slots;
-}
-
 async function handleAvailability(request, env) {
   const url = new URL(request.url);
   const date = url.searchParams.get("date");
@@ -108,7 +93,7 @@ async function handleAvailability(request, env) {
     return json({ date, slots: [] });
   }
 
-  const allSlots = generateSlots(hours.start, hours.end, CONFIG.slotDurationMinutes);
+  const allSlots = getDaySlots(hours, CONFIG.slotDurationMinutes);
 
   const { results } = await env.DB.prepare(
     "SELECT time FROM bookings WHERE date = ? AND status = 'confirmed'"
@@ -164,7 +149,7 @@ async function handleBook(request, env) {
 
   const dayOfWeek = requestedDateTime.getDay();
   const hours = CONFIG.businessHours[dayOfWeek];
-  if (!hours || time < hours.start || time >= hours.end) {
+  if (!hours || !getDaySlots(hours).includes(time)) {
     return json({ error: "Horario fuera de atención" }, 400);
   }
 
