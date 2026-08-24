@@ -7,22 +7,22 @@
 
     <div class="form-row">
       <label for="booking-email">Email</label>
-      <input type="email" id="booking-email" name="email" required />
+      <input type="email" id="booking-email" name="email" />
     </div>
 
     <div class="form-row">
-      <label for="booking-phone">Teléfono (opcional)</label>
-      <input type="tel" id="booking-phone" name="phone" />
+      <label for="booking-phone">Teléfono (obligatorio)</label>
+      <input type="tel" id="booking-phone" name="phone" inputmode="numeric" pattern="[0-9]+" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required />
     </div>
 
     <div class="form-row">
-      <label for="booking-service">Servicio</label>
-      <select id="booking-service" name="service" required>
-        <option value="">Elegir...</option>
-        <option value="Corte">Corte</option>
-        <option value="Coloración">Coloración</option>
-        <option value="Consulta">Consulta</option>
-      </select>
+      <label for="booking-race">Raza</label>
+      <input type="race" id="booking-race" name="race" />
+    </div>
+
+    <div class="form-row">
+      <label for="booking-service">Describe que quisieras</label>      
+      <textarea rows="6" style="font-size: x-small;" type="service" id="booking-service" name="service" ></textarea>
     </div>
 
     <div class="form-row">
@@ -47,7 +47,7 @@
       <input type="file" id="booking-photo2" name="photo2" accept="image/*" />
     </div>
 
-    <button type="submit">Reservar turno</button>
+    <button type="submit">Confirmar reserva</button>
     <p id="booking-status"></p>
   </form>
 </div>

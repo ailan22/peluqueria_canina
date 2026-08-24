@@ -1,21 +1,47 @@
-<!-- Koalendar Floating Button -->
-<script>
-    window.Koalendar = window.Koalendar || function () {
-        (Koalendar.props = Koalendar.props || []).push(arguments);
-    };
-</script>
+<!-- Botón "Reservar turno": abre un modal con el formulario de reserva propio -->
+<button
+  id="reservar-turno-btn"
+  type="button"
+  class="boton-reservar-flotante"
+  aria-haspopup="dialog"
+  aria-controls="booking-modal"
+>
+  Reservar turno
+</button>
 
-<script async src="https://koalendar.com/assets/widget.js"></script>
+<div id="booking-modal" class="booking-modal" hidden>
+  <div class="booking-modal__overlay" data-booking-close></div>
+  <div class="booking-modal__content" role="dialog" aria-modal="true" aria-labelledby="booking-modal-title">
+    <button type="button" class="booking-modal__close" data-booking-close aria-label="Cerrar">&times;</button>
+    <h2 id="booking-modal-title">Reservar turno</h2>
+    {{ partial "booking-form.html" . }}
+  </div>
+</div>
 
 <script>
-    Koalendar('widget', {
-            "url": "https://koalendar.com/e/bano-mascota",
-            "text": "Reservar turno",
-            "shape": "rounded",
-            "backgroundColor": "#5145CD",
-            "textColor": "#FFFFFF",
-            "position": "bottom-right",
-            "icon": "calendar"
-        });
+  (function () {
+    var btn = document.getElementById("reservar-turno-btn");
+    var modal = document.getElementById("booking-modal");
+    if (!btn || !modal) return;
+
+    function openModal() {
+      modal.hidden = false;
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      modal.hidden = true;
+      document.body.style.overflow = "";
+    }
+
+    btn.addEventListener("click", openModal);
+
+    modal.querySelectorAll("[data-booking-close]").forEach(function (el) {
+      el.addEventListener("click", closeModal);
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !modal.hidden) closeModal();
+    });
+  })();
 </script>
-<!-- End Koalendar Floating Button -->
