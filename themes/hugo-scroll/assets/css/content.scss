@@ -9,7 +9,7 @@ html {
 body {
   height: 100%;
   max-height: 100%;
-  font-family: "Roboto Slab", serif;
+  font-family: 'Poppins';
   font-size: 2rem;
   line-height: 1.6em;
   color: var(--section-light-text-color);
@@ -33,13 +33,13 @@ h1,h2,h3,h4,h5,h6 {
   line-height: 1;
   margin-top: 0;
   margin-bottom: 10px;
-  font-family: "Open Sans", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 h3,h4,h5,h6 {
   text-rendering: optimizeLegibility;
   line-height: 120%;
   margin-top: 0;
-  font-family: "Open Sans", sans-serif;
+  font-family: "Poppins", sans-serif;
   margin-bottom: 0%;
 }
 

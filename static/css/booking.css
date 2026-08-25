@@ -139,7 +139,7 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
-  color: #bc5fe3;
+  color: #2499C7;
 }
 
 .booking-modal[hidden] {
@@ -227,4 +227,114 @@
   width: 20px;
   height: 20px;
   object-fit: contain;
+}
+
+.upload-subtitle {
+  background-color: #faf8f8;
+  margin-top: 0.25rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #777;
+  line-height: 1.5;
+}
+
+/* Modal de confirmación de reserva */
+.booking-success-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.booking-success-modal[hidden] {
+  display: none;
+}
+
+.booking-success-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  animation: booking-success-fade 0.2s ease-out;
+}
+
+.booking-success-modal__content {
+  position: relative;
+  background: #fff;
+  border-radius: 12px;
+  max-width: 380px;
+  width: 100%;
+  padding: 2rem 1.75rem 1.75rem;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  animation: booking-success-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.booking-success-modal__icon {
+  margin: 0 auto 1rem;
+  width: 64px;
+  height: 64px;
+}
+
+.booking-success-modal__icon-circle {
+  fill: none;
+  stroke: #1a7f37;
+  stroke-width: 3;
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  animation: booking-success-circle 0.5s ease-out forwards;
+}
+
+.booking-success-modal__icon-check {
+  fill: none;
+  stroke: #1a7f37;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: booking-success-check 0.3s 0.45s ease-out forwards;
+}
+
+.booking-success-modal__content h2 {
+  margin: 0 0 0.5rem;
+  color: #1a7f37;
+  font-size: 1.5rem;
+}
+
+.booking-success-modal__content p {
+  margin: 0 0 1.5rem;
+  color: #444;
+  font-size: 1.05rem;
+}
+
+.booking-success-modal__close-btn {
+  padding: 0.7rem 1.6rem;
+  border: none;
+  border-radius: 4px;
+  background: #1a7f37;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.1rem;
+  width: 100%;
+}
+
+@keyframes booking-success-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes booking-success-pop {
+  0% { opacity: 0; transform: scale(0.7); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes booking-success-circle {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes booking-success-check {
+  to { stroke-dashoffset: 0; }
 }
