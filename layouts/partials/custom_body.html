@@ -13,8 +13,10 @@
   <div class="booking-modal__overlay" data-booking-close></div>
   <div class="booking-modal__content" role="dialog" aria-modal="true" aria-labelledby="booking-modal-title">
     <button type="button" class="booking-modal__close" data-booking-close aria-label="Cerrar">&times;</button>
-    <h2 id="booking-modal-title">Reservar turno</h2>
-    {{ partial "booking-form.html" . }}
+    <div class="booking-modal__bg">
+      <h2 id="booking-modal-title">Reservar turno</h2>
+      {{ partial "booking-form.html" . }}
+    </div>
   </div>
 </div>
 

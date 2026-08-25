@@ -1,49 +1,72 @@
 <div class="booking-widget">
   <form id="booking-form">
     <div class="form-row">
-      <label for="booking-name">Nombre</label>
-      <input type="text" id="booking-name" name="name" required minlength="2" />
+      <label for="booking-name">
+        <img src="/images/nombre.png" alt="" class="label-icon">
+        Nombre</label>
+      <input type="text" id="booking-name" name="name" placeholder="Nombre de la mascota..." required minlength="2" />
     </div>
 
     <div class="form-row">
-      <label for="booking-email">Email</label>
-      <input type="email" id="booking-email" name="email" />
+      <label for="booking-email">
+        <img src="/images/correo.png" alt="" class="label-icon">
+        Email</label>
+      <input type="email" id="booking-email" placeholder="Ej: abc@gmail.com" name="email" />
     </div>
 
     <div class="form-row">
-      <label for="booking-phone">Teléfono (obligatorio)</label>
-      <input type="tel" id="booking-phone" name="phone" inputmode="numeric" pattern="[0-9]+" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required />
+      <label for="booking-phone">
+        <img src="/images/telefono.png" alt="" class="label-icon">
+        Teléfono (obligatorio)
+      </label>
+      <input type="tel" id="booking-phone" name="phone" inputmode="numeric" placeholder="Ej: 09 123 456" pattern="[0-9]+" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required />
     </div>
 
     <div class="form-row">
-      <label for="booking-race">Raza</label>
-      <input type="race" id="booking-race" name="race" />
+      <label for="booking-race">
+        <img src="/images/raza.png" alt="" class="label-icon">
+        Raza</label>
+      <input type="race" id="booking-race" placeholder="Ej: caniche, bullgod" name="race" />
     </div>
 
     <div class="form-row">
-      <label for="booking-service">Describe que quisieras</label>      
-      <textarea rows="6" style="font-size: x-small;" type="service" id="booking-service" name="service" ></textarea>
+      <label for="booking-service">
+        <img src="/images/mensaje.png" alt="" class="label-icon">
+        Servicio</label>      
+      <textarea rows="3" style="font-size: x-small;" type="service" id="booking-service" placeholder="Contanos en detalle que servicio necesitás, ejemplo: baño, esquila, etc" name="service" ></textarea>
+    </div>
+
+    <div class="form-row-inline">
+    
+      <div class="form-row">
+        <label for="booking-date">
+          <img src="/images/fecha.png" alt="" class="label-icon">
+          Fecha</label>
+        <input type="date" id="booking-date" name="date" required />
+      </div>
+    
+      <div class="form-row">
+        <label for="booking-time">
+          <img src="/images/horario.png" alt="" class="label-icon">
+          Horario</label>
+        <select id="booking-time" name="time" required disabled>
+          <option value="">Elegí una fecha primero</option>
+        </select>
+      </div>
+    
     </div>
 
     <div class="form-row">
-      <label for="booking-date">Fecha</label>
-      <input type="date" id="booking-date" name="date" required />
-    </div>
-
-    <div class="form-row">
-      <label for="booking-time">Horario</label>
-      <select id="booking-time" name="time" required disabled>
-        <option value="">Elegí una fecha primero</option>
-      </select>
-    </div>
-
-    <div class="form-row">
-      <label for="booking-photo1">Foto 1 (opcional)</label>
+      <label for="booking-photo1">
+        <img src="/images/foto.png" alt="" class="label-icon">
+        Foto 1 (opcional)</label>
       <input type="file" id="booking-photo1" name="photo1" accept="image/*" />
     </div>
 
     <div class="form-row">
-      <label for="booking-photo2">Foto 2 (opcional)</label>
+      <label for="booking-photo2">
+        <img src="/images/foto.png" alt="" class="label-icon">
+        Foto 2 (opcional)</label>
       <input type="file" id="booking-photo2" name="photo2" accept="image/*" />
     </div>
 
