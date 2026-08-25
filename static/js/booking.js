@@ -62,7 +62,6 @@
 
     const payload = new FormData();
     payload.append("name", form.name.value);
-    payload.append("email", form.email.value);
     payload.append("phone", form.phone.value);
     payload.append("race", form.race.value);
     payload.append("service", form.service.value);
