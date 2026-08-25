@@ -87,6 +87,9 @@
         statusBox.className = "booking-success";
         form.reset();
         timeSelect.innerHTML = "<option value=''>Elegí una fecha primero</option>";
+        if (typeof window.showBookingSuccess === "function") {
+          window.showBookingSuccess(`Te esperamos el ${data.date} a las ${data.time} hs.`);
+        }
       }
     } catch (err) {
       statusBox.textContent = "Error de conexión, intentá de nuevo";

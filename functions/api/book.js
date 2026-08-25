@@ -1,9 +1,5 @@
 import { CONFIG, getDaySlots } from "./_config.js";
 
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
 export async function onRequestPost({ request, env }) {
   let body;
   try {
@@ -12,15 +8,12 @@ export async function onRequestPost({ request, env }) {
     return Response.json({ error: "JSON inválido" }, { status: 400 });
   }
 
-  const { name, email, phone, service, date, time } = body;
+  const { name, phone, service, date, time } = body;
 
   // Validaciones básicas
   if (!name || name.trim().length < 2) {
     return Response.json({ error: "Nombre inválido" }, { status: 400 });
-  }
-  if (!email || !isValidEmail(email)) {
-    return Response.json({ error: "Email inválido" }, { status: 400 });
-  }
+  }  
   if (!CONFIG.services.includes(service)) {
     return Response.json({ error: "Servicio inválido" }, { status: 400 });
   }

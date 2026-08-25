@@ -46,7 +46,7 @@ async function sendBookingNotification(env, booking, cancelUrl, attachments) {
     return;
   }
 
-  const { name, email, phone, race, service, date, time } = booking;
+  const { name, phone, race, service, date, time } = booking;
 
   await sendEmail(env, {
     to: env.OWNER_EMAIL,
@@ -54,7 +54,6 @@ async function sendBookingNotification(env, booking, cancelUrl, attachments) {
     html: `
       <h2>Nueva reserva de turno</h2>
       <p><strong>Cliente:</strong> ${name}</p>
-      <p><strong>Email:</strong> ${email || "-"}</p>
       <p><strong>Teléfono:</strong> ${phone || "-"}</p>
       <p><strong>Raza:</strong> ${race || "-"}</p>
       <p><strong>Servicio:</strong> ${service || "-"}</p>
@@ -107,10 +106,6 @@ async function handleAvailability(request, env) {
 
 // ---------- Crear reserva ----------
 
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024; // 5MB
 
 async function handleBook(request, env) {
@@ -121,16 +116,14 @@ async function handleBook(request, env) {
     return json({ error: "Formulario inválido" }, 400);
   }
 
-  const name = formData.get("name");
-  const email = formData.get("email");
+  const name = formData.get("name");  
   const phone = formData.get("phone");
   const race = formData.get("race");
   const service = formData.get("service");
   const date = formData.get("date");
   const time = formData.get("time");
 
-  if (!name || name.trim().length < 2) return json({ error: "Nombre inválido" }, 400);
-  if (email && !isValidEmail(email)) return json({ error: "Email inválido" }, 400);
+  if (!name || name.trim().length < 2) return json({ error: "Nombre inválido" }, 400);  
   if (!phone || !/^\d+$/.test(phone)) return json({ error: "Teléfono inválido" }, 400);
   if (service && service.length > 1000) return json({ error: "Descripción del servicio demasiado larga" }, 400);
   if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return json({ error: "Fecha inválida" }, 400);
@@ -173,7 +166,7 @@ async function handleBook(request, env) {
     await env.DB.prepare(
       `INSERT INTO bookings (name, email, phone, race, service, date, time, cancel_token)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-    ).bind(name.trim(), email?.trim() || "", phone.trim(), race?.trim() || null, service?.trim() || "", date, time, cancelToken).run();
+    ).bind(name.trim() || "", "", phone.trim(), race?.trim() || null, service?.trim() || "", date, time, cancelToken).run();
   } catch (err) {
     if (String(err.message).includes("UNIQUE")) {
       return json({ error: "Ese horario ya fue reservado, elegí otro" }, 409);
@@ -181,7 +174,7 @@ async function handleBook(request, env) {
     return json({ error: "Error al guardar la reserva" }, 500);
   }
 
-  const bookingData = { name: name.trim(), email: email?.trim() || "", phone: phone.trim(), race: race?.trim() || "", service: service?.trim() || "", date, time };
+  const bookingData = { name: name.trim(), phone: phone.trim(), race: race?.trim() || "", service: service?.trim() || "", date, time };
   const cancelUrl = `${new URL(request.url).origin}/cancelar/?token=${cancelToken}`;
 
   const attachments = [];
