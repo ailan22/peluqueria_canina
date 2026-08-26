@@ -1,0 +1,72 @@
+<div class="booking-widget">
+  <form id="booking-form">
+    <div class="form-row">
+      <label for="booking-name">
+        <img src="/images/nombre.png" alt="" class="label-icon">
+        Nombre de la mascota</label>
+      <input type="text" id="booking-name" name="name" placeholder="Nombre de la mascota..." required minlength="2" />
+    </div>
+
+    <div class="form-row">
+      <label for="booking-phone">
+        <img src="/images/telefono.png" alt="" class="label-icon">
+        Teléfono (obligatorio)
+      </label>
+      <input type="tel" id="booking-phone" name="phone" inputmode="numeric" placeholder="Ej: 09 123 456" pattern="[0-9]+" oninput="this.value = this.value.replace(/[^0-9]/g, '')" required />
+    </div>
+
+    <div class="form-row">
+      <label for="booking-race">
+        <img src="/images/raza.png" alt="" class="label-icon">
+        Raza</label>
+      <input type="race" id="booking-race" placeholder="Ej: caniche, bulldog, pastor alemán..." name="race" />
+    </div>
+
+    <div class="form-row">
+      <label for="booking-service">
+        <img src="/images/mensaje.png" alt="" class="label-icon">
+        Servicio</label>      
+      <textarea rows="3" style="font-size: x-small;" type="service" id="booking-service" placeholder="Contanos en detalle que servicio necesitás, ejemplo: baño, esquila..." name="service" ></textarea>
+    </div>
+
+    <div class="form-row-inline">    
+      <div class="form-row">
+        <label for="booking-date">
+          <img src="/images/fecha.png" alt="" class="label-icon">
+          Fecha</label>
+        <input type="date" id="booking-date" name="date" required />
+      </div>
+    
+      <div class="form-row">
+        <label for="booking-time">
+          <img src="/images/horario.png" alt="" class="label-icon">
+          Horario</label>
+        <select id="booking-time" name="time" required disabled>
+          <option value="">Elegí una fecha primero</option>
+        </select>
+      </div>    
+    </div>
+
+    <p class="upload-subtitle">
+      Para una mejor atención, se agradece si podés enviarnos fotos actuales de tu mascota.
+    </p>
+    <div class="form-row">
+      <label for="booking-photo1">
+        <img src="/images/foto.png" alt="" class="label-icon">
+        Foto 1 actual de la mascota</label>
+      <input type="file" id="booking-photo1" name="photo1" accept="image/*" />
+    </div>
+
+    <div class="form-row">
+      <label for="booking-photo2">
+        <img src="/images/foto.png" alt="" class="label-icon">
+        Foto 2 actual de la mascota</label>
+      <input type="file" id="booking-photo2" name="photo2" accept="image/*" />
+    </div>
+
+    <button type="submit">Confirmar reserva</button>
+    <p id="booking-status"></p>
+  </form>
+</div>
+
+<script src="/js/booking.js" defer></script>
