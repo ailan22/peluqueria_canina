@@ -1,0 +1,64 @@
+# Precios reales de la calculadora de "/precios/".
+#
+# Estructura: perro.<tamaño>.<pelo>.<servicio> = precio en pesos.
+# Los servicios disponibles varían según tamaño y pelo (así son los combos reales):
+#   - "corto" siempre tiene "bano"; algunos tamaños suman "deslanado".
+#   - "largo" siempre tiene "bano" y puede sumar "deslanado", "corte_sin_volumen",
+#     "corte_con_volumen" y/o "esquila".
+# Para agregar o sacar un combo, sumá/borrá la clave correspondiente - el sitio
+# se adapta solo y sólo muestra los botones de servicio que existen para esa
+# combinación de tamaño + pelo.
+
+perro:
+  mini:
+    corto:
+      bano: 490
+    largo:
+      bano: 650
+      corte_sin_volumen: 890
+      corte_con_volumen: 990
+      esquila: 890
+
+  pequeno:
+    corto:
+      bano: 650
+      deslanado: 790
+    largo:
+      bano: 700
+      deslanado: 800
+      corte_sin_volumen: 950
+      corte_con_volumen: 1200
+      esquila: 1100
+
+  mediano:
+    corto:
+      bano: 890
+      deslanado: 1100
+    largo:
+      bano: 1250
+      deslanado: 1400
+      corte_sin_volumen: 1450
+      corte_con_volumen: 1600
+      esquila: 1400
+
+  grande:
+    corto:
+      bano: 1100
+      deslanado: 1450
+    largo:
+      bano: 1450
+      deslanado: 1650
+      corte_sin_volumen: 1800
+      corte_con_volumen: 1800
+      esquila: 1400
+
+  gigante:
+    corto:
+      bano: 1700
+      deslanado: 1900
+    largo:
+      bano: 2100
+      deslanado: 2300
+      corte_sin_volumen: 2100
+      corte_con_volumen: 2400
+      esquila: 2100

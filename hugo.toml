@@ -9,7 +9,7 @@ defaultContentLanguage = "es"
 theme = "hugo-scroll"
 
 # The browser tab name
-title = "Jane Doe - Nutrition Coach & Chef Consultant"
+title = "Atras"
 
 # In order to add version information in the page's footer set to true.
 # enableGitInfo = true

@@ -65,7 +65,7 @@ enableEmoji = true
     image_options = "webp q90 lanczos photo"
 
     # Use "page_title | site_title" for <title> tags
-    # e.g. <title>Legal | Jane Doe - Nutrition Coach & Chef Consultant</title>
+    # e.g. <title>Legal | Atrás </title>
     combine_page_and_site_title = false
 
     [params.footer]

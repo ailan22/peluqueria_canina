@@ -1,0 +1,56 @@
+{{ $data := .Site.Data.precios }}
+<div class="price-calc" id="price-calc" data-precios='{{ $data | jsonify }}'>
+
+  <div class="price-calc-step" data-step="pet">
+    <h3 class="price-calc-question">¿Qué mascota tenés?</h3>
+    <div class="price-calc-options" data-group="pet">
+      <button type="button" class="price-calc-btn" data-value="perro" aria-pressed="false">
+        <span class="price-calc-emoji" aria-hidden="true">🐶</span>
+        <span>Perro</span>
+      </button>
+      <button type="button" class="price-calc-btn" data-value="gato" aria-pressed="false">
+        <span class="price-calc-emoji" aria-hidden="true">🐱</span>
+        <span>Gato</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="price-calc-step" data-step="size" hidden>
+    <h3 class="price-calc-question">¿Qué tamaño?</h3>
+    <div class="price-calc-options price-calc-options--5" data-group="size">
+      <button type="button" class="price-calc-btn" data-value="mini" aria-pressed="false"><span>Mini</span></button>
+      <button type="button" class="price-calc-btn" data-value="pequeno" aria-pressed="false"><span>Pequeño</span></button>
+      <button type="button" class="price-calc-btn" data-value="mediano" aria-pressed="false"><span>Mediano</span></button>
+      <button type="button" class="price-calc-btn" data-value="grande" aria-pressed="false"><span>Grande</span></button>
+      <button type="button" class="price-calc-btn" data-value="gigante" aria-pressed="false"><span>Gigante</span></button>
+    </div>
+  </div>
+
+  <div class="price-calc-step" data-step="coat" hidden>
+    <h3 class="price-calc-question">¿Cómo es su pelo?</h3>
+    <div class="price-calc-options" data-group="coat">
+      <button type="button" class="price-calc-btn" data-value="corto" aria-pressed="false">
+        <span class="price-calc-emoji" aria-hidden="true">✨</span>
+        <span>Corto</span>
+      </button>
+      <button type="button" class="price-calc-btn" data-value="largo" aria-pressed="false">
+        <span class="price-calc-emoji" aria-hidden="true">✨</span>
+        <span>Largo</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="price-calc-step" data-step="service" hidden>
+    <h3 class="price-calc-question">¿Qué servicio querés?</h3>
+    <div class="price-calc-options" data-group="service"></div>
+  </div>
+
+  <div class="price-calc-result" id="price-calc-result" hidden>
+    <p class="price-calc-result-label">Precio estimado</p>
+    <p class="price-calc-amount" id="price-calc-amount"></p>
+    <p class="price-calc-hint" id="price-calc-hint"></p>
+    <button type="button" class="price-calc-reset" id="price-calc-reset">Empezar de nuevo</button>
+  </div>
+</div>
+
+<script src="/js/pricing.js" defer></script>

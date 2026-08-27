@@ -1,0 +1,148 @@
+.price-calc {
+  max-width: 640px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.price-calc-step {
+  text-align: center;
+}
+
+.price-calc-question {
+  font-size: 1.3rem;
+  margin: 0 0 1rem;
+  color: #5145cd;
+}
+
+.price-calc-step--enter {
+  animation: price-calc-enter 0.35s ease;
+}
+
+@keyframes price-calc-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.price-calc-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.price-calc-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: 110px;
+  padding: 1rem 1.2rem;
+  border: 2px solid #e4defc;
+  border-radius: 14px;
+  background: #fff;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.price-calc-btn:hover {
+  transform: translateY(-2px);
+  border-color: #d38aff;
+  box-shadow: 0 6px 16px rgba(81, 69, 205, 0.15);
+}
+
+.price-calc-btn.is-selected {
+  border-color: #5145cd;
+  background: linear-gradient(135deg, #d38aff, #5145cd);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(81, 69, 205, 0.35);
+}
+
+.price-calc-emoji {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.price-calc-btn--service {
+  min-width: 200px;
+  text-align: center;
+}
+
+.price-calc-result {
+  margin-top: 0.5rem;
+  padding: 1.75rem 1.5rem;
+  border-radius: 16px;
+  background: #faf8ff;
+  border: 2px dashed #d38aff;
+  text-align: center;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.price-calc-result.is-ready {
+  background: linear-gradient(135deg, #f3ecff, #eaf7fb);
+  border-style: solid;
+  border-color: #5145cd;
+}
+
+.price-calc-result-label {
+  margin: 0 0 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  color: #777;
+}
+
+.price-calc-amount {
+  margin: 0;
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: #5145cd;
+  min-height: 3.2rem;
+}
+
+.price-calc-hint {
+  margin: 0.4rem 0 1rem;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.price-calc-reset {
+  border: none;
+  background: none;
+  color: #2499c7;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .price-calc-btn {
+    min-width: 90px;
+    padding: 0.8rem 0.9rem;
+    font-size: 0.9rem;
+  }
+
+  .price-calc-amount {
+    font-size: 2.1rem;
+  }
+}
