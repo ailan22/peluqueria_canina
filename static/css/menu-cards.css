@@ -1,0 +1,199 @@
+.menu-cards {
+    width: 100%;
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 15px;
+
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 18px;
+}
+
+/* =========================
+   TARJETAS
+   ========================= */
+
+.menu-card {
+    grid-column: span 2;
+
+    min-height: 210px;
+    padding: 18px 12px;
+
+    border-radius: 25px;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+
+    text-decoration: none;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    box-shadow: 0 7px 16px rgba(100, 80, 120, 0.10);
+
+    transition: all 0.25s ease;
+}
+
+/* =========================
+   SEGUNDA FILA
+   ========================= */
+
+/*
+   La tarjeta 4 empieza en
+   la columna 2 y ocupa 2.
+
+   La tarjeta 5 empieza en
+   la columna 4 y ocupa 2.
+*/
+
+.menu-card:nth-child(4) {
+    grid-column: 2 / span 2;
+}
+
+.menu-card:nth-child(5) {
+    grid-column: 4 / span 2;
+}
+
+/* =========================
+   HOVER
+   ========================= */
+
+.menu-card:hover {
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 12px 24px rgba(100, 80, 120, 0.18);
+}
+
+/* =========================
+   COLORES
+   ========================= */
+
+.card-lavanda {
+    background: #e8def2;
+}
+
+.card-azul {
+    background: #dceaf6;
+}
+
+.card-durazno {
+    background: #fbe5d7;
+}
+
+/* =========================
+   ICONO
+   ========================= */
+
+.card-icon {
+    width: 75px;
+    height: 75px;
+
+    margin-bottom: 12px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.80);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 34px;
+
+    flex-shrink: 0;
+}
+
+/* =========================
+   TITULO
+   ========================= */
+
+.card-title {
+    font-size: 20px;
+    font-weight: 500;
+
+    letter-spacing: 1px;
+
+    color: #625d66;
+
+    margin-bottom: 6px;
+}
+
+/* =========================
+   DESCRIPCIÓN
+   ========================= */
+
+.card-description {
+    font-size: 15px;
+    line-height: 1.35;
+
+    color: #6d6870;
+}
+
+/* =========================
+   TABLET
+   ========================= */
+
+@media (max-width: 800px) {
+
+    .menu-cards {
+        grid-template-columns: repeat(6, 1fr);
+        gap: 12px;
+    }
+
+    .menu-card {
+        min-height: 190px;
+    }
+
+    .card-icon {
+        width: 65px;
+        height: 65px;
+        font-size: 30px;
+    }
+
+    .card-title {
+        font-size: 17px;
+    }
+
+    .card-description {
+        font-size: 13px;
+    }
+}
+
+/* =========================
+   CELULAR
+   ========================= */
+
+@media (max-width: 550px) {
+
+    .menu-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .menu-card,
+    .menu-card:nth-child(4),
+    .menu-card:nth-child(5) {
+        grid-column: auto;
+    }
+
+    .menu-card {
+        min-height: 185px;
+        padding: 15px 8px;
+        border-radius: 22px;
+    }
+
+    .card-icon {
+        width: 62px;
+        height: 62px;
+        font-size: 28px;
+    }
+
+    .card-title {
+        font-size: 17px;
+    }
+
+    .card-description {
+        font-size: 13px;
+    }
+}
