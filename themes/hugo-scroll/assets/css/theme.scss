@@ -464,3 +464,71 @@ button[id^="popover-btn-"]:hover {
       font-size: .9rem
     }
   }
+
+    /* Estilo del botón flotante */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: #25d366;
+      /* Negro como el logo */
+      color: #000000;
+      /* Dorado canela */
+      padding: 12px 20px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      z-index: 9999;
+      border: 1px solid #ffffff;
+      transition: all 0.3s ease;
+    }
+  
+    .whatsapp-float:hover {
+      background-color: #C5A059;
+      /* Invierte colores al pasar el mouse */
+      color: #1A1A1B;
+      transform: translateY(-5px);
+    }
+  
+    .whatsapp-float svg {
+      fill: currentColor;
+    }
+  
+    /* Ocultar el texto en celulares muy pequeños para que no estorbe */
+    @media (max-width: 480px) {
+      .whatsapp-float span {
+        display: none;
+      }
+  
+      .whatsapp-float {
+        padding: 15px;
+        right: 20px;
+        bottom: 20px;
+      }
+    }
+        .animate-ping {
+          animation: ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+          position: absolute;
+          inset: 0;
+          border-radius: 50px;
+          background-color: #00ff00;
+          /* El dorado de tu logo */
+          z-index: -8;
+          /* Se expande por detrás del botón */
+        }
+    
+        .whatsapp-float {
+          position: fixed;
+          /* Mantiene el botón en su sitio */
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          /* ... resto de tus estilos (color, padding, etc) ... */
+          position: fixed;
+          overflow: visible;
+          /* Importante para que la onda se vea al salir */
+        }
