@@ -338,3 +338,9 @@
 @keyframes booking-success-check {
   to { stroke-dashoffset: 0; }
 }
+
+.label-icon-contact {
+  width: 25px;
+  height: 25px;
+  object-fit: contain;
+}
