@@ -121,3 +121,37 @@ button[id^="popover-btn-"] {
 </style>
 {{ end }}
 {{ end }}
+
+{{- /* Página de Reserva: mantiene el fondo que tenía el modal (fondo_reserva.png) */ -}}
+{{ if eq .Slug "reserva" }}
+{{ with resources.Get "images/fondo_reserva.png" }}
+<style>
+  .page-template.page-reserva {
+    background-color: #efe7f5;
+  }
+
+  /* El título y el subtítulo ya están dibujados en la imagen de fondo */
+  .page-reserva .post-title {
+    display: none;
+  }
+
+  .page-reserva .post-content {
+    background-color: #fff;
+    background-image: url('{{ .RelPermalink }}');
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: 100% 100%;
+    border-radius: 16px;
+    /* Deja libre la franja superior donde va el título dibujado */
+    padding: 10% 1.25rem 2.5rem;
+    overflow: hidden;
+  }
+
+  @media (min-width: 700px) {
+    .page-reserva .post-content {
+      padding-top: 135px;
+    }
+  }
+</style>
+{{ end }}
+{{ end }}

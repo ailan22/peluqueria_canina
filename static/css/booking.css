@@ -39,26 +39,18 @@
   cursor: not-allowed;
 }
 
-#booking-status.booking-success {
-  color: #1a7f37;
-  font-weight: 600;
-}
-
-#booking-status.booking-error {
-  color: #c81e1e;
-  font-weight: 600;
-}
-
 .boton-reservar-flotante {
   position: fixed;
   bottom: 25px;
   right: 25px;
   z-index: 1000;
+  display: inline-block;
   padding: 17px 28px;
   border: none;
   border-radius: 50px;
   background: #5145CD;
   color: white;
+  text-decoration: none;
   font-size: 17px;
   font-weight: 700;
   cursor: pointer;
@@ -167,7 +159,7 @@
    campos en vez de quedar fijo detrás de ellos. */
 .booking-modal__bg {
   background-color: #fff;
-  background-image: url("/images/fondo_modal.png");
+  background-image: url("/images/fondo_reserva.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100% 100%;

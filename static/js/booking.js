@@ -3,8 +3,7 @@
   if (!form) return;
 
   const dateInput = document.getElementById("booking-date");
-  const timeSelect = document.getElementById("booking-time");
-  const statusBox = document.getElementById("booking-status");
+  const timeSelect = document.getElementById("booking-time");  
   const submitBtn = form.querySelector("button[type=submit]");
 
   // Limitar el date picker a hoy .. hoy+30 días

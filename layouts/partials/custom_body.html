@@ -1,24 +1,7 @@
-<!-- Botón "Reservar turno": abre un modal con el formulario de reserva propio -->
-<button
-  id="reservar-turno-btn"
-  type="button"
-  class="boton-reservar-flotante"
-  aria-haspopup="dialog"
-  aria-controls="booking-modal"
->
+<!-- Botón flotante "Reservar turno": lleva a la página de reserva -->
+<a href="/reserva/" class="boton-reservar-flotante">
   Reservar turno
-</button>
-
-<div id="booking-modal" class="booking-modal" hidden>
-  <div class="booking-modal__overlay" data-booking-close></div>
-  <div class="booking-modal__content" role="dialog" aria-modal="true" aria-labelledby="booking-modal-title">
-    <button type="button" class="booking-modal__close" data-booking-close aria-label="Cerrar">&times;</button>
-    <div class="booking-modal__bg">
-      <h2 id="booking-modal-title">Reservar turno</h2>
-      {{ partial "booking-form.html" . }}
-    </div>
-  </div>
-</div>
+</a>
 
 <div id="booking-success-modal" class="booking-success-modal" hidden>
   <div class="booking-success-modal__overlay" data-success-close></div>
@@ -37,58 +20,28 @@
 
 <script>
   (function () {
-    var btn = document.getElementById("reservar-turno-btn");
-    var modal = document.getElementById("booking-modal");
     var successModal = document.getElementById("booking-success-modal");
     var successMessage = document.getElementById("booking-success-message");
-    if (!btn || !modal) return;
-
-    function openModal() {
-      modal.hidden = false;
-      document.body.style.overflow = "hidden";
-    }
-
-    function closeModal() {
-      modal.hidden = true;
-      document.body.style.overflow = "";
-    }
-
-    btn.addEventListener("click", openModal);
-
-    var menuCardReserva = document.getElementById("menu-card-reserva");
-    if (menuCardReserva) {
-      menuCardReserva.addEventListener("click", function (e) {
-        e.preventDefault();
-        openModal();
-      });
-    }
-
-    modal.querySelectorAll("[data-booking-close]").forEach(function (el) {
-      el.addEventListener("click", closeModal);
-    });
-
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && !modal.hidden) closeModal();
-      if (e.key === "Escape" && successModal && !successModal.hidden) closeSuccessModal();
-    });
+    if (!successModal) return;
 
     function closeSuccessModal() {
       successModal.hidden = true;
       document.body.style.overflow = "";
     }
 
-    if (successModal) {
-      successModal.querySelectorAll("[data-success-close]").forEach(function (el) {
-        el.addEventListener("click", closeSuccessModal);
-      });
+    successModal.querySelectorAll("[data-success-close]").forEach(function (el) {
+      el.addEventListener("click", closeSuccessModal);
+    });
 
-      // Expuesto para que booking.js dispare el aviso llamativo al confirmar la reserva.
-      window.showBookingSuccess = function (message) {
-        closeModal();
-        if (successMessage) successMessage.textContent = message;
-        successModal.hidden = false;
-        document.body.style.overflow = "hidden";
-      };
-    }
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !successModal.hidden) closeSuccessModal();
+    });
+
+    // Expuesto para que booking.js dispare el aviso llamativo al confirmar la reserva.
+    window.showBookingSuccess = function (message) {
+      if (successMessage) successMessage.textContent = message;
+      successModal.hidden = false;
+      document.body.style.overflow = "hidden";
+    };
   })();
 </script>
