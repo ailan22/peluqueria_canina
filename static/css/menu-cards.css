@@ -5,7 +5,7 @@
     padding: 0 15px;
 
     display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 18px;
 }
 
@@ -14,8 +14,6 @@
    ========================= */
 
 .menu-card {
-    grid-column: span 2;
-
     min-height: 210px;
     padding: 18px 12px;
 
@@ -32,26 +30,6 @@
     box-shadow: 0 7px 16px rgba(100, 80, 120, 0.10);
 
     transition: all 0.25s ease;
-}
-
-/* =========================
-   SEGUNDA FILA
-   ========================= */
-
-/*
-   La tarjeta 4 empieza en
-   la columna 2 y ocupa 2.
-
-   La tarjeta 5 empieza en
-   la columna 4 y ocupa 2.
-*/
-
-.menu-card:nth-child(4) {
-    grid-column: 2 / span 2;
-}
-
-.menu-card:nth-child(5) {
-    grid-column: 4 / span 2;
 }
 
 /* =========================
@@ -137,7 +115,7 @@
 @media (max-width: 800px) {
 
     .menu-cards {
-        grid-template-columns: repeat(6, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 12px;
     }
 
@@ -169,12 +147,6 @@
     .menu-cards {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
-    }
-
-    .menu-card,
-    .menu-card:nth-child(4),
-    .menu-card:nth-child(5) {
-        grid-column: auto;
     }
 
     .menu-card {
