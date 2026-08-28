@@ -1,3 +1,4 @@
+<!-- 
 ---
 title: "Servicios"
 header_menu_title: "Servicios"
@@ -5,7 +6,7 @@ navigation_menu_title: "Servicios"
 weight: 2
 header_menu: true
 ---
-<!-- 
+
 Feature notice: This section displays options to customize title:
 
 - has a normal section title (`title` = "The Services I Offer"),

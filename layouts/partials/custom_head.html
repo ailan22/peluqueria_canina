@@ -103,3 +103,19 @@ button[id^="popover-btn-"] {
     animation: koalendar-pulse 3s ease-in-out infinite;
 }
 </style>
+
+{{- /* Fondo decorativo (mismo que el home) para la página de Servicios y tarifas */ -}}
+{{ if eq .Slug "precios" }}
+{{ with resources.Get "images/fondo.jpeg" }}
+<style>
+  .page-template.page-precios {
+    background-color: #f7f0f7;
+    background-image: url('{{ .RelPermalink }}');
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+</style>
+{{ end }}
+{{ end }}

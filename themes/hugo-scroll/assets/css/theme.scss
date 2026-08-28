@@ -189,6 +189,7 @@ a.fn-item {
 /* ========= Content ==========*/
 .post-title {
   margin: 0;
+  text-align: center !important;
 
   a {
     text-decoration: none;
@@ -256,7 +257,7 @@ a.fn-item {
 /* ======= Single pages =========== */
 .page-template {
 
-  background-color: var(--single-page-bg-color);
+  background-color: #ffffff;
   color: var(--single-page-text-color);
   // to remove the white space after the footer on pages shorter
   // than actually would fit into the browser window
@@ -278,7 +279,7 @@ a.fn-item {
 
   // Insert some mad padding up in the header for better spacing
   .post-header {
-    padding: 60px 0;
+    padding: 20px 0;
   }
 }
 

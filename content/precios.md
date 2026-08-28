@@ -1,8 +1,9 @@
 ---
-title: "🐾Servicios y precios"
+title: "Servicios y tarifas"
+slug: "precios"
 ---
 
-Contestá estas preguntas y calculá al instante el precio estimado para tu mascota.
+Contestá estas preguntas y calculá al instante el precio <b>estimado</b> para tu mascota.
 
 {{< price-calculator >}}
 
