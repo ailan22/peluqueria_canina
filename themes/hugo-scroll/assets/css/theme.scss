@@ -70,7 +70,7 @@ body {
     font-size: 2.5rem;
     line-height: 1.5em;
     font-weight: 400;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: "poppins", "sans-serif";
     font-weight: 600;
     letter-spacing: 0;
     text-shadow: var(--cover-title-text-shadow);
@@ -439,3 +439,28 @@ button[id^="popover-btn-"]:hover {
   /* Borde negro exterior */
   transform: translateY(-3px) !important;
 }
+
+.benefits {  
+  font-size: 1rem !important;
+  background-color: rgba(241, 94, 234, 0.1);
+  color: #e639fd !important;
+  padding: 8px 15px;
+  border-radius: 30px;
+  display: inline-block;
+  border: 1px dashed #d080f5;
+  letter-spacing: 1px;
+  font-weight: 400;
+  margin-top: 10px;
+  color: #4093e0 !important;
+  text-align: center
+}
+@media(max-width: 768px) {
+  .benefits {
+      font-size: 1rem !important;
+      display: inline-block;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      overflow-x: auto;
+      font-size: .9rem
+    }
+  }

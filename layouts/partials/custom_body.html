@@ -55,6 +55,14 @@
 
     btn.addEventListener("click", openModal);
 
+    var menuCardReserva = document.getElementById("menu-card-reserva");
+    if (menuCardReserva) {
+      menuCardReserva.addEventListener("click", function (e) {
+        e.preventDefault();
+        openModal();
+      });
+    }
+
     modal.querySelectorAll("[data-booking-close]").forEach(function (el) {
       el.addEventListener("click", closeModal);
     });
