@@ -45,9 +45,8 @@
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const photo1 = form.photo1.files[0];
-    const photo2 = form.photo2.files[0];
-    for (const photo of [photo1, photo2]) {
+    const photo1 = form.photo1.files[0];    
+    for (const photo of [photo1]) {
       if (photo && photo.size > MAX_PHOTO_BYTES) {
         statusBox.textContent = "Cada foto debe pesar menos de 5MB";
         statusBox.className = "booking-error";
