@@ -57,11 +57,11 @@ async function sendBookingNotification(env, booking, cancelUrl, attachments) {
       <h2>Nueva reserva de turno</h2>
       <p><strong>Cliente:</strong> ${name}</p>
       <p><strong>Teléfono:</strong> ${phone || "-"}</p>
-      <p><strong>Raza:</strong> ${race || "-"}</p>
-      <p><strong>¿Cómo llega la mascota?:</strong> ${pickupMethodLabel}</p>
+      <p><strong>Raza:</strong> ${race || "-"}</p>      
       <p><strong>Servicio:</strong> ${service || "-"}</p>
       <p><strong>Fecha:</strong> ${date}</p>
       <p><strong>Hora:</strong> ${time}</p>
+      <p><strong>¿Cómo llega la mascota?:</strong> ${pickupMethodLabel}</p>
       <p>Si el cliente avisa que no puede asistir, podés cancelar el turno acá:</p>
       <p><a href="${cancelUrl}">${cancelUrl}</a></p>
     `,
