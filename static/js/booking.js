@@ -3,8 +3,9 @@
   if (!form) return;
 
   const dateInput = document.getElementById("booking-date");
-  const timeSelect = document.getElementById("booking-time");  
+  const timeSelect = document.getElementById("booking-time");
   const submitBtn = form.querySelector("button[type=submit]");
+  const statusBox = document.getElementById("booking-status");
 
   // Limitar el date picker a hoy .. hoy+30 días
   const today = new Date();
@@ -67,7 +68,6 @@
     payload.append("date", dateInput.value);
     payload.append("time", timeSelect.value);
     if (photo1) payload.append("photo1", photo1);
-    if (photo2) payload.append("photo2", photo2);
 
     try {
       const res = await fetch("/api/book", {
