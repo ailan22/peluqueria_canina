@@ -120,6 +120,16 @@ button[id^="popover-btn-"] {
     background-size: cover;
     background-attachment: fixed;
   }
+
+  /* En celular, "fixed" hace que el fondo no cubra bien la pantalla
+     (aparecen franjas blancas al mostrarse/ocultarse la barra del navegador) */
+  @media (max-width: 800px) {
+    .page-template.page-precios,
+    .page-template.page-contacto,
+    .page-template.page-galeria {
+      background-attachment: scroll;
+    }
+  }
 </style>
 {{ end }}
 {{ end }}
