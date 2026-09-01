@@ -99,4 +99,6 @@
   </div>
 </div>
 
-<script src="/js/booking.js" defer></script>
+{{ with resources.Get "js/booking.js" | resources.Fingerprint "sha256" }}
+<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" defer></script>
+{{ end }}

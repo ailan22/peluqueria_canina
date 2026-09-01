@@ -51,4 +51,6 @@
   </div>
 </div>
 
-<script src="/js/pricing.js" defer></script>
+{{ with resources.Get "js/pricing.js" | resources.Fingerprint "sha256" }}
+<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" defer></script>
+{{ end }}
