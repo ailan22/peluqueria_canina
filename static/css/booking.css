@@ -356,37 +356,6 @@
   object-fit: contain;
 }
 
-/* =========================
-   BOTÓN "VER CONDICIONES"
-   ========================= */
-
-.conditions-row {
-  margin-top: 0.4rem;
-  align-items: center;
-  text-align: center;
-}
-
-.booking-widget .conditions-btn {
-  margin-top: 0;
-  padding: 0.7rem 1.4rem;
-  background: #fff;
-  color: #5145CD;
-  border: 2px solid #D38AFF;
-  font-size: 1.05rem;
-  width: 100%;
-}
-
-.booking-widget .conditions-btn:hover {
-  background: #f7f0ff;
-}
-
-.conditions-hint {
-  margin: 0.4rem 0 0;
-  font-size: 0.85rem;
-  color: #888;
-  text-align: center;
-}
-
 .booking-hint {
   color: #666;
   font-size: 0.9rem;

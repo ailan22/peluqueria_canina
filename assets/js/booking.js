@@ -41,29 +41,36 @@
 
   dateInput.addEventListener("change", loadSlots);
 
-  // El turno solo se puede reservar después de leer y aceptar las condiciones.
-  const conditionsBtn = document.getElementById("conditions-btn");
+  // Al presionar "Confirmar reserva" se muestran las condiciones como modal.
+  // El turno solo se envía después de leerlas y aceptarlas.
   const conditionsModal = document.getElementById("conditions-modal");
   const conditionsAcceptBtn = document.getElementById("conditions-accept-btn");
   let conditionsAccepted = false;
+  let pendingSubmit = false;
 
   function openConditionsModal() {
+    if (!conditionsModal) return;
     conditionsModal.hidden = false;
     document.body.style.overflow = "hidden";
   }
 
   function closeConditionsModal() {
+    if (!conditionsModal) return;
     conditionsModal.hidden = true;
     document.body.style.overflow = "";
   }
 
-  if (conditionsBtn && conditionsModal && conditionsAcceptBtn) {
-    conditionsBtn.addEventListener("click", openConditionsModal);
+  if (conditionsModal && conditionsAcceptBtn) {
+    // Mostrar las condiciones apenas se abre la página de reserva.
+    openConditionsModal();
 
     conditionsAcceptBtn.addEventListener("click", () => {
       conditionsAccepted = true;
-      submitBtn.disabled = false;
       closeConditionsModal();
+      if (pendingSubmit) {
+        pendingSubmit = false;
+        form.requestSubmit();
+      }
     });
 
     conditionsModal.querySelectorAll("[data-conditions-close]").forEach((el) => {
@@ -81,6 +88,7 @@
     e.preventDefault();
 
     if (!conditionsAccepted) {
+      pendingSubmit = true;
       openConditionsModal();
       return;
     }

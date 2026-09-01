@@ -74,12 +74,7 @@
       <input type="file" id="booking-photo1" name="photo1" accept="image/*" />
     </div>    
 
-    <div class="form-row conditions-row">
-      <button type="button" id="conditions-btn" class="conditions-btn">📋 Ver condiciones del turno</button>
-      <p class="conditions-hint">Es necesario leerlas para poder reservar ⬇️</p>
-    </div>
-
-    <button type="submit" disabled>Confirmar reserva</button>
+    <button type="submit">Confirmar reserva</button>
     <p id="booking-status" style="text-align: center;"></p>    
   </form>
 </div>
@@ -90,10 +85,12 @@
     <div class="conditions-modal__handle" aria-hidden="true"></div>
     <h2 id="conditions-title">Condiciones de tu turno 🐾</h2>
     <div class="conditions-list">
-      <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">⏰</span> 15 minutos de tolerancia.</div>
-      <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">📅</span> 48 horas de anticipación para cambios/cancelaciones.</div>
+      <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">⏰</span> 15 minutos de tolerancia pasada la hora de reserva.</div>
+      <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">📅</span> Mínimo 48 horas de anticipación para cambios/cancelaciones.</div>
       <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">💰</span> Pasado estos tiempos, se pierde la seña.</div>
-      <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">💬</span> Cambios de fecha por WhatsApp.</div>
+      <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">💬</span> Si necesitas cambio de fecha escribinos por WhatsApp.</div>
+      <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">💙</span> <strong>Muchas gracias por su comprensión</strong>
+      </div>
     </div>
     <button type="button" id="conditions-accept-btn" class="conditions-accept-btn">Entendido ✓</button>
   </div>
