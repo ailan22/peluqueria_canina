@@ -88,7 +88,8 @@
     hide(resultEl);
 
     if (value === "gato") {
-      showGatoMessage();
+      clearSelectedIn(stepCoat.querySelector('.price-calc-options[data-group="coat"]'));
+      reveal(stepCoat);
     } else {
       reveal(stepSize);
     }
@@ -116,7 +117,10 @@
 
   function buildServiceOptions() {
     serviceOptions.innerHTML = "";
-    var combos = ((data.perro || {})[selection.size] || {})[selection.coat] || {};
+    var combos =
+      selection.pet === "gato"
+        ? (data.gato || {})[selection.coat] || {}
+        : ((data.perro || {})[selection.size] || {})[selection.coat] || {};
 
     SERVICE_ORDER.filter(function (key) {
       return typeof combos[key] === "number";
@@ -138,20 +142,14 @@
 
   function showPrice(price) {
     amountEl.textContent = "$ " + price.toLocaleString("es-AR");
+    var sizePart = selection.pet === "gato" ? "gato de " : SIZE_LABELS[selection.size].toLowerCase() + " de ";
     hintEl.textContent =
       "Precio estimado para " +
-      SIZE_LABELS[selection.size].toLowerCase() +
-      " de pelo " +
+      sizePart +
+      "pelo " +
       selection.coat +
       ". Puede variar según el estado de tu mascota.";
     resultEl.classList.add("is-ready");
-    reveal(resultEl);
-  }
-
-  function showGatoMessage() {
-    amountEl.textContent = "";
-    hintEl.textContent = "Todavía no tenemos precios de gatos cargados acá. ¡Escribinos y te confirmamos el valor!";
-    resultEl.classList.remove("is-ready");
     reveal(resultEl);
   }
 

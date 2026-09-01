@@ -40,6 +40,9 @@
 
 <link rel="stylesheet" href="/css/booking.css">
 <link rel="stylesheet" href="/css/pricing.css">
+<link rel="stylesheet" href="/css/menu-cards.css">
+<link rel="stylesheet" href="/css/contacto.css">
+<link rel="stylesheet" href="/css/galeria.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -102,3 +105,65 @@ button[id^="popover-btn-"] {
     animation: koalendar-pulse 3s ease-in-out infinite;
 }
 </style>
+
+{{- /* Fondo decorativo (mismo que el home) para las páginas de Servicios y tarifas, Contacto y Galería */ -}}
+{{ if or (eq .Slug "precios") (eq .Slug "contacto") (eq .Slug "galeria") }}
+{{ with resources.Get "images/fondo.jpeg" }}
+<style>
+  .page-template.page-precios,
+  .page-template.page-contacto,
+  .page-template.page-galeria {
+    background-color: #f7f0f7;
+    background-image: url('{{ .RelPermalink }}');
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+
+  /* En celular, "fixed" hace que el fondo no cubra bien la pantalla
+     (aparecen franjas blancas al mostrarse/ocultarse la barra del navegador) */
+  @media (max-width: 800px) {
+    .page-template.page-precios,
+    .page-template.page-contacto,
+    .page-template.page-galeria {
+      background-attachment: scroll;
+    }
+  }
+</style>
+{{ end }}
+{{ end }}
+
+{{- /* Página de Reserva: mantiene el fondo que tenía el modal (fondo_reserva.png) */ -}}
+{{ if eq .Slug "reserva" }}
+{{ with resources.Get "images/fondo_reserva.png" }}
+<style>
+  .page-template.page-reserva {
+    background-color: #efe7f5;
+  }
+
+  /* El título y el subtítulo ya están dibujados en la imagen de fondo */
+  .page-reserva .post-title {
+    display: none;
+  }
+
+  .page-reserva .post-content {
+    background-color: #fff;
+    background-image: url('{{ .RelPermalink }}');
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: 100% 100%;
+    border-radius: 16px;
+    /* Deja libre la franja superior donde va el título dibujado */
+    padding: 10% 1.25rem 2.5rem;
+    overflow: hidden;
+  }
+
+  @media (min-width: 700px) {
+    .page-reserva .post-content {
+      padding-top: 135px;
+    }
+  }
+</style>
+{{ end }}
+{{ end }}

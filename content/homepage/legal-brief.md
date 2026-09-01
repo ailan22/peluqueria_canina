@@ -1,3 +1,4 @@
+<!--
 ---
 title: "Contacto"
 weight: 98
@@ -7,7 +8,7 @@ header_menu: true
 detailed_page_path: /legal/
 detailed_page_homepage_content: true
 ---
-<!-- 
+ 
 The file **legal-brief.md** creates an internal link on the cover page without the leading icon.
 
 If the parameter `detailed_page_homepage_content` is set to false neither this section nor the navigation menu entry will be shown (but the link on the cover page will be).

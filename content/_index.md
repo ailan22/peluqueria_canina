@@ -1,6 +1,6 @@
 ---
 # Striking header background image, Ideal images are homogenous around the centre and contrasting to the text. Non-ideal images can use `title_guard`
-header_image: "images/fondo_lila.png"
+header_image: "images/fondo.jpeg"
 #
 # When set true, uses video from custom_header_video.html partial, instead of header_image
 header_use_video: false
@@ -10,9 +10,11 @@ header_logo: "images/logo.png"
 #
 # Headers are safeHTML, you can use HTML tags such as b,i,u,br
 header_headline: "''Pekes''"
-header_subheadline: <div class="subheadline-text">
-                        Resaltamos la <b>belleza</b> de tu mascota <br>                        
-                    </div>                                            
+header_subheadline: <div class="benefits">
+                        <div class="subheadline-text">
+                            Resaltamos la <b>belleza</b> y el <b>cuidado</b> de tu mascota <br>                        
+                        </div>                                            
+                    </div>
 
 # Add a 'Go back to top' item to the navigation menu
 # Title: name of navigation menu entry

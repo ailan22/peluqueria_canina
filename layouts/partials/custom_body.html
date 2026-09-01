@@ -1,24 +1,14 @@
-<!-- Botón "Reservar turno": abre un modal con el formulario de reserva propio -->
-<button
-  id="reservar-turno-btn"
-  type="button"
-  class="boton-reservar-flotante"
-  aria-haspopup="dialog"
-  aria-controls="booking-modal"
->
-  Reservar turno
-</button>
-
-<div id="booking-modal" class="booking-modal" hidden>
-  <div class="booking-modal__overlay" data-booking-close></div>
-  <div class="booking-modal__content" role="dialog" aria-modal="true" aria-labelledby="booking-modal-title">
-    <button type="button" class="booking-modal__close" data-booking-close aria-label="Cerrar">&times;</button>
-    <div class="booking-modal__bg">
-      <h2 id="booking-modal-title">Reservar turno</h2>
-      {{ partial "booking-form.html" . }}
-    </div>
-  </div>
-</div>
+<!-- Botón Flotante de WhatsApp -->
+    <a href="https://wa.me/59892417342" class="whatsapp-float" target="_blank" rel="noopener noreferrer">
+      <!-- Esta es la capa que hará el efecto de onda -->
+      <span class="animate-ping"></span>
+    
+      <svg width="25" height="25" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.438 9.889-9.887.002-5.462-4.415-9.89-9.881-9.891-5.446 0-9.886 4.44-9.89 9.886-.001 2.13.614 3.479 1.558 5.237l-1.037 3.791 3.969-1.041z" />
+      </svg>
+      <span>WhatsApp</span>
+    </a>
 
 <div id="booking-success-modal" class="booking-success-modal" hidden>
   <div class="booking-success-modal__overlay" data-success-close></div>
@@ -37,50 +27,28 @@
 
 <script>
   (function () {
-    var btn = document.getElementById("reservar-turno-btn");
-    var modal = document.getElementById("booking-modal");
     var successModal = document.getElementById("booking-success-modal");
     var successMessage = document.getElementById("booking-success-message");
-    if (!btn || !modal) return;
-
-    function openModal() {
-      modal.hidden = false;
-      document.body.style.overflow = "hidden";
-    }
-
-    function closeModal() {
-      modal.hidden = true;
-      document.body.style.overflow = "";
-    }
-
-    btn.addEventListener("click", openModal);
-
-    modal.querySelectorAll("[data-booking-close]").forEach(function (el) {
-      el.addEventListener("click", closeModal);
-    });
-
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && !modal.hidden) closeModal();
-      if (e.key === "Escape" && successModal && !successModal.hidden) closeSuccessModal();
-    });
+    if (!successModal) return;
 
     function closeSuccessModal() {
       successModal.hidden = true;
       document.body.style.overflow = "";
     }
 
-    if (successModal) {
-      successModal.querySelectorAll("[data-success-close]").forEach(function (el) {
-        el.addEventListener("click", closeSuccessModal);
-      });
+    successModal.querySelectorAll("[data-success-close]").forEach(function (el) {
+      el.addEventListener("click", closeSuccessModal);
+    });
 
-      // Expuesto para que booking.js dispare el aviso llamativo al confirmar la reserva.
-      window.showBookingSuccess = function (message) {
-        closeModal();
-        if (successMessage) successMessage.textContent = message;
-        successModal.hidden = false;
-        document.body.style.overflow = "hidden";
-      };
-    }
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !successModal.hidden) closeSuccessModal();
+    });
+
+    // Expuesto para que booking.js dispare el aviso llamativo al confirmar la reserva.
+    window.showBookingSuccess = function (message) {
+      if (successMessage) successMessage.textContent = message;
+      successModal.hidden = false;
+      document.body.style.overflow = "hidden";
+    };
   })();
 </script>

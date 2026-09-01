@@ -1,5 +1,6 @@
 <div class="booking-widget">
   <form id="booking-form">
+    <h2 style="text-align: center;">Reservar turno</h2>
     <div class="form-row">
       <label for="booking-name">
         <img src="/images/nombre.png" alt="" class="label-icon">
@@ -47,26 +48,57 @@
       </div>    
     </div>
 
+    <div class="form-row">
+      <label for="booking-traslate">
+      <img src="/images/traslado.png" alt="" class="label-icon">
+      ¿Cómo llegará tu mascota a la peluquería?</label>
+      <div class="radio-group">
+        <label class="radio-option">
+          <input type="radio" name="pickup_method" value="retiro_domicilio" required />
+          Solicito retiro a domicilio
+        </label>
+        <label class="radio-option">
+          <input type="radio" name="pickup_method" value="la_llevo" required />
+          La llevo personalmente
+        </label>
+      </div>
+    </div>
+
     <p class="upload-subtitle">
-      Para una mejor atención, se agradece si podés enviarnos fotos actuales de tu mascota.
+      Para una mejor atención, se agradece si podés enviarnos una foto actual de tu mascota.
     </p>
     <div class="form-row">
       <label for="booking-photo1">
         <img src="/images/foto.png" alt="" class="label-icon">
-        Foto 1 actual de la mascota</label>
+        Foto actual de la mascota</label>
       <input type="file" id="booking-photo1" name="photo1" accept="image/*" />
+    </div>    
+
+    <div class="form-row conditions-row">
+      <button type="button" id="conditions-btn" class="conditions-btn">📋 Ver condiciones del turno</button>
+      <p class="conditions-hint">Es necesario leerlas para poder reservar ⬇️</p>
     </div>
 
-    <div class="form-row">
-      <label for="booking-photo2">
-        <img src="/images/foto.png" alt="" class="label-icon">
-        Foto 2 actual de la mascota</label>
-      <input type="file" id="booking-photo2" name="photo2" accept="image/*" />
-    </div>
-
-    <button type="submit">Confirmar reserva</button>
-    <p id="booking-status"></p>
+    <button type="submit" disabled>Confirmar reserva</button>
+    <p id="booking-status" style="text-align: center;"></p>    
   </form>
 </div>
 
-<script src="/js/booking.js" defer></script>
+<div id="conditions-modal" class="conditions-modal" hidden>
+  <div class="conditions-modal__overlay" data-conditions-close></div>
+  <div class="conditions-modal__sheet" role="dialog" aria-modal="true" aria-labelledby="conditions-title">
+    <div class="conditions-modal__handle" aria-hidden="true"></div>
+    <h2 id="conditions-title">Condiciones de tu turno 🐾</h2>
+    <div class="conditions-list">
+      <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">⏰</span> 15 minutos de tolerancia.</div>
+      <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">📅</span> 48 horas de anticipación para cambios/cancelaciones.</div>
+      <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">💰</span> Pasado estos tiempos, se pierde la seña.</div>
+      <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">💬</span> Cambios de fecha por WhatsApp.</div>
+    </div>
+    <button type="button" id="conditions-accept-btn" class="conditions-accept-btn">Entendido ✓</button>
+  </div>
+</div>
+
+{{ with resources.Get "js/booking.js" | resources.Fingerprint "sha256" }}
+<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" defer></script>
+{{ end }}

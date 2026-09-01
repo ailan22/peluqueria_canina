@@ -29,12 +29,10 @@
   <div class="price-calc-step" data-step="coat" hidden>
     <h3 class="price-calc-question">¿Cómo es su pelo?</h3>
     <div class="price-calc-options" data-group="coat">
-      <button type="button" class="price-calc-btn" data-value="corto" aria-pressed="false">
-        <span class="price-calc-emoji" aria-hidden="true">✨</span>
+      <button type="button" class="price-calc-btn" data-value="corto" aria-pressed="false">        
         <span>Corto</span>
       </button>
-      <button type="button" class="price-calc-btn" data-value="largo" aria-pressed="false">
-        <span class="price-calc-emoji" aria-hidden="true">✨</span>
+      <button type="button" class="price-calc-btn" data-value="largo" aria-pressed="false">        
         <span>Largo</span>
       </button>
     </div>
@@ -46,11 +44,13 @@
   </div>
 
   <div class="price-calc-result" id="price-calc-result" hidden>
-    <p class="price-calc-result-label">Precio estimado</p>
+    <p class="price-calc-result-label"><strong>Precio estimado</strong></p>
     <p class="price-calc-amount" id="price-calc-amount"></p>
     <p class="price-calc-hint" id="price-calc-hint"></p>
     <button type="button" class="price-calc-reset" id="price-calc-reset">Empezar de nuevo</button>
   </div>
 </div>
 
-<script src="/js/pricing.js" defer></script>
+{{ with resources.Get "js/pricing.js" | resources.Fingerprint "sha256" }}
+<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" defer></script>
+{{ end }}

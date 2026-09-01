@@ -1,0 +1,73 @@
+{{- $items := slice
+  (dict "file" "galeria-01-caniche-blanco.jpg" "alt" "Caniche blanco, antes y después del corte")
+  (dict "file" "galeria-02-caniche-gris.jpg" "alt" "Caniche gris, antes y después del corte")
+  (dict "file" "galeria-03-shih-tzu.jpg" "alt" "Shih tzu, antes y después del corte")
+  (dict "file" "galeria-04-caniche-crema.jpg" "alt" "Caniche crema, antes y después del baño")
+  (dict "file" "galeria-05-bobtail.jpg" "alt" "Old English Sheepdog recién bañado")
+  (dict "file" "galeria-06-desenrede.jpg" "alt" "Desenrede de nudos en el pelaje")
+  (dict "file" "galeria-07-caniche-buzo.jpg" "alt" "Caniche blanco, antes y después del corte")
+  (dict "file" "galeria-08-shih-tzu-gris.jpg" "alt" "Shih tzu gris, antes y después del corte")
+  (dict "file" "galeria-09-yorkshire.jpg" "alt" "Yorkshire terrier, antes y después del prolijado")
+  (dict "file" "galeria-10-schnauzer.jpg" "alt" "Antes y después del corte de pelaje")
+  (dict "file" "galeria-11-chow-chow.jpg" "alt" "Chow chow recién bañado y cepillado")
+  (dict "file" "galeria-12-bichon-maltes.jpg" "alt" "Antes y después del baño y corte")
+  (dict "file" "galeria-13-bichon-frise.jpg" "alt" "Bichón frisé, antes y después del corte")
+  (dict "file" "galeria-14-caniche-cara.jpg" "alt" "Caniche blanco, detalle del corte de cara")
+  (dict "file" "galeria-15-gato-persa-deslanado.jpg" "alt" "Gato persa, deslanado de pelaje")
+  (dict "file" "galeria-16-gato-persa.jpg" "alt" "Gato persa después del deslanado")
+-}}
+{{- $image_options := .Site.Params.image_options | default "webp q85 lanczos photo" -}}
+
+<div class="galeria-grid">
+  {{- range $item := $items }}
+    {{- with resources.Get (printf "images/galeria/%s" $item.file) }}
+      {{- $thumb := .Resize (printf "600x %s" $image_options) }}
+      {{- $full := .Fit (printf "1400x1400 %s" $image_options) }}
+      <button type="button" class="galeria-item" data-full="{{ $full.RelPermalink }}" data-alt="{{ $item.alt }}">
+        <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" alt="{{ $item.alt }}" loading="lazy" decoding="async">
+      </button>
+    {{- end }}
+  {{- end }}
+</div>
+
+<div id="galeria-lightbox" class="galeria-lightbox">
+  <button type="button" class="galeria-lightbox-close" aria-label="Cerrar">&times;</button>
+  <img src="" alt="">
+</div>
+
+<script>
+(function () {
+  var grid = document.querySelector(".galeria-grid");
+  var lightbox = document.getElementById("galeria-lightbox");
+  if (!grid || !lightbox) return;
+
+  var lightboxImg = lightbox.querySelector("img");
+  var closeBtn = lightbox.querySelector(".galeria-lightbox-close");
+
+  function open(item) {
+    lightboxImg.src = item.getAttribute("data-full");
+    lightboxImg.alt = item.getAttribute("data-alt") || "";
+    lightbox.classList.add("is-open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function close() {
+    lightbox.classList.remove("is-open");
+    lightboxImg.src = "";
+    document.body.style.overflow = "";
+  }
+
+  grid.addEventListener("click", function (e) {
+    var item = e.target.closest(".galeria-item");
+    if (item) open(item);
+  });
+
+  closeBtn.addEventListener("click", close);
+  lightbox.addEventListener("click", function (e) {
+    if (e.target === lightbox) close();
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && lightbox.classList.contains("is-open")) close();
+  });
+})();
+</script>

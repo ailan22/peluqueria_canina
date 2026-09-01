@@ -62,3 +62,10 @@ perro:
       corte_sin_volumen: 2100
       corte_con_volumen: 2400
       esquila: 2100
+
+# Los gatos no tienen paso de "tamaño": gato.<pelo>.<servicio> = precio.
+gato:
+  corto:
+    bano: 590
+  largo:
+    deslanado: 890

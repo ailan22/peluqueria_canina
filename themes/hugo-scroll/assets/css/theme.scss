@@ -70,7 +70,7 @@ body {
     font-size: 2.5rem;
     line-height: 1.5em;
     font-weight: 400;
-    font-family: "Barlow Condensed", sans-serif;
+    font-family: "poppins", "sans-serif";
     font-weight: 600;
     letter-spacing: 0;
     text-shadow: var(--cover-title-text-shadow);
@@ -189,6 +189,7 @@ a.fn-item {
 /* ========= Content ==========*/
 .post-title {
   margin: 0;
+  text-align: center !important;
 
   a {
     text-decoration: none;
@@ -256,7 +257,7 @@ a.fn-item {
 /* ======= Single pages =========== */
 .page-template {
 
-  background-color: var(--single-page-bg-color);
+  background-color: #ffffff;
   color: var(--single-page-text-color);
   // to remove the white space after the footer on pages shorter
   // than actually would fit into the browser window
@@ -278,15 +279,14 @@ a.fn-item {
 
   // Insert some mad padding up in the header for better spacing
   .post-header {
-    padding: 60px 0;
+    padding: 20px 0;
   }
 }
 
 // Keep large images within the bounds of the post-width
 .post-content img {
   display: block;
-  max-width: 100%;
-  margin: 0 auto;
+  max-width: 100%;  
 }
 
 /** ==========  Site footer ============ */
@@ -439,3 +439,96 @@ button[id^="popover-btn-"]:hover {
   /* Borde negro exterior */
   transform: translateY(-3px) !important;
 }
+
+.benefits {  
+  font-size: 1rem !important;
+  background-color: rgba(241, 94, 234, 0.1);
+  color: #e639fd !important;
+  padding: 8px 15px;
+  border-radius: 30px;
+  display: inline-block;
+  border: 1px dashed #d080f5;
+  letter-spacing: 1px;
+  font-weight: 400;
+  margin-top: 10px;
+  color: #4093e0 !important;
+  text-align: center
+}
+@media(max-width: 768px) {
+  .benefits {
+      font-size: 1rem !important;
+      display: inline-block;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      overflow-x: auto;
+      font-size: .9rem
+    }
+  }
+
+    /* Estilo del botón flotante */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: #25d366;
+      /* Negro como el logo */
+      color: #000000;
+      /* Dorado canela */
+      padding: 12px 20px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      z-index: 9999;
+      border: 1px solid #ffffff;
+      transition: all 0.3s ease;
+    }
+  
+    .whatsapp-float:hover {
+      background-color: #31eb59;
+      /* Invierte colores al pasar el mouse */
+      color: #1A1A1B;
+      transform: translateY(-5px);
+    }
+  
+    .whatsapp-float svg {
+      fill: currentColor;
+    }
+  
+    /* Ocultar el texto en celulares muy pequeños para que no estorbe */
+    @media (max-width: 480px) {
+      .whatsapp-float span {
+        display: none;
+      }
+  
+      .whatsapp-float {
+        padding: 15px;
+        right: 20px;
+        bottom: 20px;
+      }
+    }
+        .animate-ping {
+          animation: ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+          position: absolute;
+          inset: 0;
+          border-radius: 50px;
+          background-color: #4ff04f;
+          /* El dorado de tu logo */
+          z-index: -8;
+          /* Se expande por detrás del botón */
+        }
+    
+        .whatsapp-float {
+          position: fixed;
+          /* Mantiene el botón en su sitio */
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          /* ... resto de tus estilos (color, padding, etc) ... */
+          position: fixed;
+          overflow: visible;
+          /* Importante para que la onda se vea al salir */
+        }
