@@ -64,6 +64,35 @@
     background: #fbe5d7;
 }
 
+.card-violeta {
+    background: #efa9f8;
+}
+
+/* =========================
+   TARJETA ANCHA (Reserva)
+   ========================= */
+
+.menu-card.menu-card--wide {
+    grid-column: span 2;
+    min-height: auto;
+    flex-direction: row;
+    justify-content: center;
+    gap: 16px;
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+.menu-card--wide .card-icon {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 0;
+    font-size: 26px;
+}
+
+.menu-card--wide .card-title {
+    margin-bottom: 2px;
+}
+
 /* =========================
    ICONO
    ========================= */
