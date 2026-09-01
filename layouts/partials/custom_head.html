@@ -42,6 +42,7 @@
 <link rel="stylesheet" href="/css/pricing.css">
 <link rel="stylesheet" href="/css/menu-cards.css">
 <link rel="stylesheet" href="/css/contacto.css">
+<link rel="stylesheet" href="/css/galeria.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -105,12 +106,13 @@ button[id^="popover-btn-"] {
 }
 </style>
 
-{{- /* Fondo decorativo (mismo que el home) para las páginas de Servicios y tarifas y Contacto */ -}}
-{{ if or (eq .Slug "precios") (eq .Slug "contacto") }}
+{{- /* Fondo decorativo (mismo que el home) para las páginas de Servicios y tarifas, Contacto y Galería */ -}}
+{{ if or (eq .Slug "precios") (eq .Slug "contacto") (eq .Slug "galeria") }}
 {{ with resources.Get "images/fondo.jpeg" }}
 <style>
   .page-template.page-precios,
-  .page-template.page-contacto {
+  .page-template.page-contacto,
+  .page-template.page-galeria {
     background-color: #f7f0f7;
     background-image: url('{{ .RelPermalink }}');
     background-repeat: no-repeat;
