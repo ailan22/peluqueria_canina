@@ -74,11 +74,29 @@
       <input type="file" id="booking-photo1" name="photo1" accept="image/*" />
     </div>    
 
-    <button type="submit">Confirmar reserva</button>
-    <p id="booking-status" style="text-align: center;">⚠️🐶Recorda que tenemos hasta <strong> 15 minutos </strong> de tolerancia con el retraso, pasado este tiempo quedará <strong>cancelado</strong> el turno y se
-    perderá la seña</p>
-    <p id="booking-status" style="text-align: center;">Si necesitás cambiar la fecha, escribinos por WhatsApp.</p>
+    <div class="form-row conditions-row">
+      <button type="button" id="conditions-btn" class="conditions-btn">📋 Ver condiciones del turno</button>
+      <p class="conditions-hint">Es necesario leerlas para poder reservar ⬇️</p>
+    </div>
+
+    <button type="submit" disabled>Confirmar reserva</button>
+    <p id="booking-status" style="text-align: center;"></p>    
   </form>
+</div>
+
+<div id="conditions-modal" class="conditions-modal" hidden>
+  <div class="conditions-modal__overlay" data-conditions-close></div>
+  <div class="conditions-modal__sheet" role="dialog" aria-modal="true" aria-labelledby="conditions-title">
+    <div class="conditions-modal__handle" aria-hidden="true"></div>
+    <h2 id="conditions-title">Condiciones de tu turno 🐾</h2>
+    <div class="conditions-list">
+      <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">⏰</span> 15 minutos de tolerancia.</div>
+      <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">📅</span> 48 horas de anticipación para cambios/cancelaciones.</div>
+      <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">💰</span> Pasado estos tiempos, se pierde la seña.</div>
+      <div class="conditions-item"><span class="conditions-emoji" aria-hidden="true">💬</span> Cambios de fecha por WhatsApp.</div>
+    </div>
+    <button type="button" id="conditions-accept-btn" class="conditions-accept-btn">Entendido ✓</button>
+  </div>
 </div>
 
 <script src="/js/booking.js" defer></script>

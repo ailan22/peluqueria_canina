@@ -355,3 +355,155 @@
   height: 25px;
   object-fit: contain;
 }
+
+/* =========================
+   BOTÓN "VER CONDICIONES"
+   ========================= */
+
+.conditions-row {
+  margin-top: 0.4rem;
+  align-items: center;
+  text-align: center;
+}
+
+.booking-widget .conditions-btn {
+  margin-top: 0;
+  padding: 0.7rem 1.4rem;
+  background: #fff;
+  color: #5145CD;
+  border: 2px solid #D38AFF;
+  font-size: 1.05rem;
+  width: 100%;
+}
+
+.booking-widget .conditions-btn:hover {
+  background: #f7f0ff;
+}
+
+.conditions-hint {
+  margin: 0.4rem 0 0;
+  font-size: 0.85rem;
+  color: #888;
+  text-align: center;
+}
+
+.booking-hint {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* =========================
+   MODAL "CONDICIONES DE TU TURNO"
+   ========================= */
+
+.conditions-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.conditions-modal[hidden] {
+  display: none;
+}
+
+.conditions-modal__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 10, 30, 0.6);
+  animation: booking-success-fade 0.2s ease-out;
+}
+
+.conditions-modal__sheet {
+  position: relative;
+  background: #fff;
+  border-radius: 18px;
+  max-width: 420px;
+  width: 100%;
+  padding: 1.75rem;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  animation: booking-success-pop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.conditions-modal__handle {
+  display: none;
+}
+
+.conditions-modal__sheet h2 {
+  margin: 0 0 1.1rem;
+  font-size: 1.4rem;
+  color: #444;
+}
+
+.conditions-list {
+  margin: 0 0 1.5rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.conditions-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 1.02rem;
+  color: #444;
+  line-height: 1.35;
+}
+
+.conditions-emoji {
+  flex-shrink: 0;
+  font-size: 1.2rem;
+  line-height: 1.35;
+}
+
+.conditions-accept-btn {
+  padding: 0.8rem 1.6rem;
+  border: none;
+  border-radius: 4px;
+  background: #5145CD;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  width: 100%;
+}
+
+.conditions-accept-btn:hover {
+  background: #443ab0;
+}
+
+/* En celular, el modal sube desde abajo como una hoja (bottom sheet) */
+@media (max-width: 600px) {
+  .conditions-modal {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .conditions-modal__sheet {
+    max-width: 100%;
+    border-radius: 20px 20px 0 0;
+    padding: 0.75rem 1.5rem 1.75rem;
+    animation: conditions-sheet-up 0.3s ease-out;
+  }
+
+  .conditions-modal__handle {
+    display: block;
+    width: 42px;
+    height: 5px;
+    border-radius: 3px;
+    background: #e0dce8;
+    margin: 0 auto 1.1rem;
+  }
+}
+
+@keyframes conditions-sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}

@@ -41,10 +41,49 @@
 
   dateInput.addEventListener("change", loadSlots);
 
+  // El turno solo se puede reservar después de leer y aceptar las condiciones.
+  const conditionsBtn = document.getElementById("conditions-btn");
+  const conditionsModal = document.getElementById("conditions-modal");
+  const conditionsAcceptBtn = document.getElementById("conditions-accept-btn");
+  let conditionsAccepted = false;
+
+  function openConditionsModal() {
+    conditionsModal.hidden = false;
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeConditionsModal() {
+    conditionsModal.hidden = true;
+    document.body.style.overflow = "";
+  }
+
+  if (conditionsBtn && conditionsModal && conditionsAcceptBtn) {
+    conditionsBtn.addEventListener("click", openConditionsModal);
+
+    conditionsAcceptBtn.addEventListener("click", () => {
+      conditionsAccepted = true;
+      submitBtn.disabled = false;
+      closeConditionsModal();
+    });
+
+    conditionsModal.querySelectorAll("[data-conditions-close]").forEach((el) => {
+      el.addEventListener("click", closeConditionsModal);
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !conditionsModal.hidden) closeConditionsModal();
+    });
+  }
+
   const MAX_PHOTO_BYTES = 5 * 1024 * 1024; // 5MB
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    if (!conditionsAccepted) {
+      openConditionsModal();
+      return;
+    }
 
     const photo1 = form.photo1.files[0];    
     for (const photo of [photo1]) {
