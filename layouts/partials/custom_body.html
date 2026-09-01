@@ -25,6 +25,121 @@
   </div>
 </div>
 
+<!-- Huellitas de perrito paseando por la pantalla -->
+<div id="huellitas-track" aria-hidden="true"></div>
+
+<style>
+  #huellitas-track {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .huellita {
+    position: absolute;
+    width: 42px;
+    height: 42px;
+    /* color de las huellas: cambialo a gusto */
+    color: rgba(120, 84, 92, 0.32);
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--giro, 0deg)) scale(0.3);
+    animation: huellita-paso var(--vida, 4s) ease forwards;
+    animation-delay: var(--retraso, 0s);
+    will-change: opacity, transform;
+  }
+
+  .huellita svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  @keyframes huellita-paso {
+    0%   { opacity: 0; transform: translate(-50%, -50%) rotate(var(--giro, 0deg)) scale(0.3); }
+    12%  { opacity: 1; transform: translate(-50%, -50%) rotate(var(--giro, 0deg)) scale(1); }
+    62%  { opacity: 1; transform: translate(-50%, -50%) rotate(var(--giro, 0deg)) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--giro, 0deg)) scale(0.85); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #huellitas-track { display: none; }
+  }
+</style>
+
+<script>
+  (function () {
+    var track = document.getElementById("huellitas-track");
+    if (!track) return;
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    var PAW_SVG =
+      '<svg viewBox="0 0 64 64" fill="currentColor" xmlns="http://www.w3.org/2000/svg">' +
+      '<ellipse cx="17" cy="23" rx="6.5" ry="9" transform="rotate(-22 17 23)"/>' +
+      '<ellipse cx="28" cy="14" rx="6.5" ry="9.5" transform="rotate(-8 28 14)"/>' +
+      '<ellipse cx="39" cy="14" rx="6.5" ry="9.5" transform="rotate(8 39 14)"/>' +
+      '<ellipse cx="50" cy="23" rx="6.5" ry="9" transform="rotate(22 50 23)"/>' +
+      '<path d="M33 28c10 0 19 8 19 18 0 7-6 10-12 8-3-1-4-2-7-2s-4 1-7 2c-6 2-12-1-12-8 0-10 9-18 19-18z"/>' +
+      '</svg>';
+
+    function rand(min, max) { return min + Math.random() * (max - min); }
+
+    function pasear() {
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      var haciaDerecha = Math.random() < 0.5;
+
+      // Trayectoria: de un extremo al otro, con una leve inclinación
+      var anguloTrayecto = rand(-50, 30);                 // grados
+      var yInicio = rand(h * 0.15, h * 0.85);
+      var pendiente = Math.tan(anguloTrayecto * Math.PI / 240);
+
+      var pasos = Math.round(rand(8, 12));
+      var margen = 60;
+      var xIni = haciaDerecha ? -margen : w + margen;
+      var xFin = haciaDerecha ? w + margen : -margen;
+
+      var separacion = rand(0.20, 0.4);                   // segundos entre huella y huella
+      var vida = rand(3.2, 4.4);                          // segundos que vive cada huella
+      var giroBase = (haciaDerecha ? 90 : -90) + anguloTrayecto;
+
+      var huellas = [];
+
+      for (var i = 0; i < pasos; i++) {
+        var t = i / (pasos - 1);
+        var x = xIni + (xFin - xIni) * t;
+        var y = yInicio + (x - xIni) * pendiente;
+
+        // Alterna pata izquierda / derecha: desplazamiento perpendicular al avance
+        var lado = (i % 2 === 0) ? 1 : -1;
+        var perp = anguloTrayecto + 90;
+        y += lado * 13 * Math.cos(perp * Math.PI / 180) * (haciaDerecha ? 1 : -1);
+
+        var huella = document.createElement("div");
+        huella.className = "huellita";
+        huella.innerHTML = PAW_SVG;
+        huella.style.left = x + "px";
+        huella.style.top = y + "px";
+        huella.style.setProperty("--giro", (giroBase + lado * 8 + rand(-4, 4)) + "deg");
+        huella.style.setProperty("--retraso", (i * separacion) + "s");
+        huella.style.setProperty("--vida", vida + "s");
+        track.appendChild(huella);
+        huellas.push(huella);
+      }
+
+      var totalMs = (pasos * separacion + vida) * 1000;
+      setTimeout(function () {
+        huellas.forEach(function (el) { el.remove(); });
+      }, totalMs + 200);
+
+      setTimeout(pasear, totalMs + rand(3500, 8000));
+    }
+
+    setTimeout(pasear, 2000);
+  })();
+</script>
+
 <script>
   (function () {
     var successModal = document.getElementById("booking-success-modal");
