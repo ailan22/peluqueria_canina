@@ -27,6 +27,13 @@
 
   var SERVICE_ORDER = ["bano", "deslanado", "corte_sin_volumen", "corte_con_volumen", "esquila"];
 
+  var SERVICE_DESCRIPTIONS = {
+    corte_sin_volumen:
+      "Mantenemos el pelo más largo y trabajamos la forma del manto para lograr una terminación más esponjosa y estética, tanto en patas como en cuerpo.",
+    corte_con_volumen:
+      "Dejamos un largo uniforme en todo el cuerpo y patas, buscando un acabado más prolijo y práctico, pero manteniendo una linda terminación.",
+  };
+
   var selection = { pet: null, size: null, coat: null, service: null };
 
   var stepPet = root.querySelector('.price-calc-step[data-step="pet"]');
@@ -34,6 +41,7 @@
   var stepCoat = root.querySelector('.price-calc-step[data-step="coat"]');
   var stepService = root.querySelector('.price-calc-step[data-step="service"]');
   var serviceOptions = stepService.querySelector('.price-calc-options[data-group="service"]');
+  var serviceDescEl = document.getElementById("price-calc-service-desc");
 
   var resultEl = document.getElementById("price-calc-result");
   var amountEl = document.getElementById("price-calc-amount");
@@ -115,8 +123,16 @@
     reveal(stepService);
   });
 
+  function showServiceDesc(key) {
+    if (!serviceDescEl) return;
+    var desc = SERVICE_DESCRIPTIONS[key];
+    serviceDescEl.textContent = desc || "";
+    serviceDescEl.hidden = !desc;
+  }
+
   function buildServiceOptions() {
     serviceOptions.innerHTML = "";
+    showServiceDesc(null);
     var combos =
       selection.pet === "gato"
         ? (data.gato || {})[selection.coat] || {}
@@ -134,6 +150,7 @@
       btn.addEventListener("click", function () {
         selection.service = key;
         selectButton(serviceOptions, key);
+        showServiceDesc(key);
         showPrice(combos[key]);
       });
       serviceOptions.appendChild(btn);
@@ -164,6 +181,7 @@
       hide(stepCoat);
       hide(stepService);
       hide(resultEl);
+      showServiceDesc(null);
       amountEl.textContent = "";
       hintEl.textContent = "";
     });

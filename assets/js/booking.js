@@ -112,6 +112,7 @@
     payload.append("race", form.race.value);
     payload.append("pickup_method", form.pickup_method.value);
     payload.append("service", form.service.value);
+    payload.append("notes", form.notes.value);
     payload.append("date", dateInput.value);
     payload.append("time", timeSelect.value);
     if (photo1) payload.append("photo1", photo1);

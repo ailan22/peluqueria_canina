@@ -46,7 +46,7 @@ async function sendBookingNotification(env, booking, cancelUrl, attachments) {
     return;
   }
 
-  const { name, phone, race, pickupMethod, service, date, time } = booking;
+  const { name, phone, race, pickupMethod, service, notes, date, time } = booking;
   const pickupMethodLabel =
     pickupMethod === "retiro_domicilio" ? "Solicita retiro a domicilio" : "La lleva personalmente";
 
@@ -59,6 +59,7 @@ async function sendBookingNotification(env, booking, cancelUrl, attachments) {
       <p><strong>Teléfono:</strong> ${phone || "-"}</p>
       <p><strong>Raza:</strong> ${race || "-"}</p>      
       <p><strong>Servicio:</strong> ${service || "-"}</p>
+      <p><strong>Sobre la mascota:</strong> ${notes || "-"}</p>
       <p><strong>Fecha:</strong> ${date}</p>
       <p><strong>Hora:</strong> ${time}</p>
       <p><strong>¿Cómo llega la mascota?:</strong> ${pickupMethodLabel}</p>
@@ -124,6 +125,7 @@ async function handleBook(request, env) {
   const race = formData.get("race");
   const pickupMethod = formData.get("pickup_method");
   const service = formData.get("service");
+  const notes = formData.get("notes");
   const date = formData.get("date");
   const time = formData.get("time");
 
@@ -133,6 +135,7 @@ async function handleBook(request, env) {
     return json({ error: "Indicá cómo llegará tu mascota" }, 400);
   }
   if (service && service.length > 1000) return json({ error: "Descripción del servicio demasiado larga" }, 400);
+  if (notes && notes.length > 1000) return json({ error: "El comentario sobre la mascota es demasiado largo" }, 400);
   if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return json({ error: "Fecha inválida" }, 400);
   if (!time || !/^\d{2}:\d{2}$/.test(time)) return json({ error: "Hora inválida" }, 400);
 
@@ -171,9 +174,9 @@ async function handleBook(request, env) {
 
   try {
     await env.DB.prepare(
-      `INSERT INTO bookings (name, email, phone, race, pickup_method, service, date, time, cancel_token)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    ).bind(name.trim() || "", "", phone.trim(), race?.trim() || null, pickupMethod, service?.trim() || "", date, time, cancelToken).run();
+      `INSERT INTO bookings (name, email, phone, race, pickup_method, service, notes, date, time, cancel_token)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(name.trim() || "", "", phone.trim(), race?.trim() || null, pickupMethod, service?.trim() || "", notes?.trim() || null, date, time, cancelToken).run();
   } catch (err) {
     if (String(err.message).includes("UNIQUE")) {
       return json({ error: "Ese horario ya fue reservado, elegí otro" }, 409);
@@ -181,7 +184,7 @@ async function handleBook(request, env) {
     return json({ error: "Error al guardar la reserva" }, 500);
   }
 
-  const bookingData = { name: name.trim(), phone: phone.trim(), race: race?.trim() || "", pickupMethod, service: service?.trim() || "", date, time };
+  const bookingData = { name: name.trim(), phone: phone.trim(), race: race?.trim() || "", pickupMethod, service: service?.trim() || "", notes: notes?.trim() || "", date, time };
   const cancelUrl = `${new URL(request.url).origin}/cancelar/?token=${cancelToken}`;
 
   const attachments = [];

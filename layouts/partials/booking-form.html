@@ -27,7 +27,7 @@
       <label for="booking-service">
         <img src="/images/mensaje.png" alt="" class="label-icon">
         Servicio</label>      
-      <textarea rows="3" style="font-size: x-small;" type="service" id="booking-service" placeholder="Contanos en detalle que servicio necesitás, ejemplo: baño, esquila..." name="service" ></textarea>
+      <textarea rows="3" style="font-size: x-small;" type="service" id="booking-service" placeholder="Contanos en detalle que servicio necesitás, baño, corte, esquila, deslanado, etc." name="service" ></textarea>
     </div>
 
     <div class="form-row-inline">    
@@ -64,15 +64,23 @@
       </div>
     </div>
 
-    <p class="upload-subtitle">
-      Para una mejor atención, se agradece si podés enviarnos una foto actual de tu mascota.
-    </p>
+    <div class="form-row">
+      <label for="booking-notes">
+        <img src="/images/pregunta.png" alt="" class="label-icon">
+        ¿Hay algo que deba saber de tu mascota?</label>
+      <textarea rows="3" style="font-size: x-small;" id="booking-notes"
+        placeholder="Contanos si es nerviosa(o), agresiva(o), si tiene alguna lesión, alergia, miedo a algo..." name="notes"></textarea>
+    </div>
+
     <div class="form-row">
       <label for="booking-photo1">
         <img src="/images/foto.png" alt="" class="label-icon">
         Foto actual de la mascota</label>
       <input type="file" id="booking-photo1" name="photo1" accept="image/*" />
     </div>    
+    <p class="upload-subtitle">
+      Para una mejor atención, se agradece si podés enviarnos una foto actual de tu mascota.
+    </p>
 
     <button type="submit">Confirmar reserva</button>
     <p id="booking-status" style="text-align: center;"></p>    

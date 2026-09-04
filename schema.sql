@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   race TEXT,
   pickup_method TEXT NOT NULL DEFAULT 'la_llevo', -- retiro_domicilio | la_llevo
   service TEXT NOT NULL,
+  notes TEXT,                -- comentario libre del cliente sobre la mascota
   date TEXT NOT NULL,        -- formato YYYY-MM-DD
   time TEXT NOT NULL,        -- formato HH:MM (24h)
   status TEXT NOT NULL DEFAULT 'confirmed', -- confirmed | cancelled

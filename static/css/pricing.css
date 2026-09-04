@@ -99,6 +99,22 @@
   text-align: center;
 }
 
+.price-calc-service-desc {
+  max-width: 460px;
+  margin: 1rem auto 0;
+  padding: 0.85rem 1.1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--calc-selected-border);
+  color: var(--calc-ink-soft);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.price-calc-service-desc[hidden] {
+  display: none;
+}
+
 .price-calc-result {
   margin-top: 0.5rem;
   padding: 1.75rem 1.5rem;
