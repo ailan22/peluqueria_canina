@@ -465,70 +465,182 @@ button[id^="popover-btn-"]:hover {
     }
   }
 
-    /* Estilo del botón flotante */
-    .whatsapp-float {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background-color: #25d366;
-      /* Negro como el logo */
-      color: #000000;
-      /* Dorado canela */
-      padding: 12px 20px;
-      border-radius: 50px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-      font-weight: bold;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      z-index: 9999;
-      border: 1px solid #ffffff;
-      transition: all 0.3s ease;
-    }
-  
-    .whatsapp-float:hover {
-      background-color: #31eb59;
-      /* Invierte colores al pasar el mouse */
-      color: #1A1A1B;
-      transform: translateY(-5px);
-    }
-  
-    .whatsapp-float svg {
-      fill: currentColor;
-    }
-  
-    /* Ocultar el texto en celulares muy pequeños para que no estorbe */
-    @media (max-width: 480px) {
-      .whatsapp-float span {
-        display: none;
-      }
-  
-      .whatsapp-float {
-        padding: 15px;
-        right: 20px;
-        bottom: 20px;
-      }
-    }
-        .animate-ping {
-          animation: ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-          position: absolute;
-          inset: 0;
-          border-radius: 50px;
-          background-color: #4ff04f;
-          /* El dorado de tu logo */
-          z-index: -8;
-          /* Se expande por detrás del botón */
-        }
-    
-        .whatsapp-float {
-          position: fixed;
-          /* Mantiene el botón en su sitio */
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          /* ... resto de tus estilos (color, padding, etc) ... */
-          position: fixed;
-          overflow: visible;
-          /* Importante para que la onda se vea al salir */
-        }
+/* ================================
+   BOTÓN FLOTANTE WHATSAPP
+   ================================ */
+
+.whatsapp-float {
+  position: fixed;
+  bottom: 25px;
+  right: 20px;
+  width: 65px;
+  height: 65px;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  animation: whatsapp-pulse-mobile 2.5s infinite;
+}
+.whatsapp-dog {
+  width: 75px;
+  height: 75px;
+  object-fit: contain;
+}
+
+/* Hover en PC */
+.whatsapp-float:hover {
+  background-color: #31eb59;
+  color: #1A1A1B;
+  transform: translateY(-5px);
+  animation: none;
+}
+
+.whatsapp-float svg {
+  fill: currentColor;
+}
+
+.whatsapp-float__label {
+  display: none;
+}
+
+/* ================================
+   PC / TABLET: etiqueta "WhatsApp"
+   ================================ */
+
+@media (min-width: 481px) {
+
+  .whatsapp-float {
+    width: auto;
+    height: auto;
+    padding: 8px 22px 8px 10px;
+    border-radius: 50px;
+    gap: 6px;
+    background: #25D366;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  }
+
+  .whatsapp-float__label {
+    display: inline-block;
+    color: #000000;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: .3px;
+    white-space: nowrap;
+  }
+
+  .whatsapp-float .whatsapp-dog {
+    width: 68px;
+    height: 68px;
+  }
+
+  .whatsapp-float:hover {
+    background-color: #1ebe4f;
+    color: #fff;
+  }
+}
+
+
+
+/* ================================
+   ANIMACIÓN DE PULSO
+   ================================ */
+
+@keyframes whatsapp-pulse {
+
+  0% {
+    transform: scale(1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  }
+
+  10% {
+    transform: scale(1.08);
+    box-shadow:
+      0 0 0 6px rgba(37, 211, 102, 0.20),
+      0 4px 20px rgba(0, 0, 0, 0.35);
+  }
+
+  20% {
+    transform: scale(1);
+  }
+
+  30% {
+    transform: scale(1.05);
+  }
+
+  40% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+
+
+/* ================================
+   CELULARES
+   ================================ */
+
+@media (max-width: 480px) {
+
+  .whatsapp-float span {
+    display: none;
+  }
+
+  .whatsapp-float {
+    width: 62px;
+    height: 62px;
+    padding: 5px;
+    right: 20px;
+    bottom: 20px;
+    border-radius: 50%;
+  }
+
+  .whatsapp-dog {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+
+/* Pulso especial para celular */
+
+@keyframes whatsapp-pulse-mobile {
+
+  0% {
+    transform: scale(1);
+  }
+
+  8% {
+    transform: scale(1.12);
+  }
+
+  16% {
+    transform: scale(1);
+  }
+
+  24% {
+    transform: scale(1.08);
+  }
+
+  32% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+.whatsapp-dog {
+  width: 55px;
+  height: 60px;
+  object-fit: contain;
+  flex-shrink: 0;
+}

@@ -1,3 +1,7 @@
+{{- $salon := slice
+  (dict "file" "salon-1.jpeg" "alt" "Salon primera")
+  (dict "file" "salon-2.jpeg" "alt" "Salon segunda")
+-}}
 {{- $items := slice
   (dict "file" "galeria-01-caniche-blanco.jpg" "alt" "Caniche blanco, antes y después del corte")
   (dict "file" "galeria-02-caniche-gris.jpg" "alt" "Caniche gris, antes y después del corte")
@@ -8,7 +12,7 @@
   (dict "file" "galeria-07-caniche-buzo.jpg" "alt" "Caniche blanco, antes y después del corte")
   (dict "file" "galeria-08-shih-tzu-gris.jpg" "alt" "Shih tzu gris, antes y después del corte")
   (dict "file" "galeria-09-yorkshire.jpg" "alt" "Yorkshire terrier, antes y después del prolijado")
-  (dict "file" "galeria-10-schnauzer.jpg" "alt" "Antes y después del corte de pelaje")
+  (dict "file" "galeria-10-caniche.jpeg" "alt" "Antes y después del corte de pelaje")
   (dict "file" "galeria-11-chow-chow.jpg" "alt" "Chow chow recién bañado y cepillado")
   (dict "file" "galeria-12-bichon-maltes.jpg" "alt" "Antes y después del baño y corte")
   (dict "file" "galeria-13-bichon-frise.jpg" "alt" "Bichón frisé, antes y después del corte")
@@ -18,6 +22,20 @@
 -}}
 {{- $image_options := .Site.Params.image_options | default "webp q85 lanczos photo" -}}
 
+<h3 class="galeria-subtitulo">Nuestro salón</h3>
+<div class="galeria-grid galeria-grid--salon">
+  {{- range $item := $salon }}
+    {{- with resources.Get (printf "images/galeria/%s" $item.file) }}
+      {{- $thumb := .Resize (printf "600x %s" $image_options) }}
+      {{- $full := .Fit (printf "1400x1400 %s" $image_options) }}
+      <button type="button" class="galeria-item" data-full="{{ $full.RelPermalink }}" data-alt="{{ $item.alt }}">
+        <img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" alt="{{ $item.alt }}" loading="lazy" decoding="async">
+      </button>
+    {{- end }}
+  {{- end }}
+</div>
+
+<h3 class="galeria-subtitulo">Nuestros trabajos</h3>
 <div class="galeria-grid">
   {{- range $item := $items }}
     {{- with resources.Get (printf "images/galeria/%s" $item.file) }}
@@ -37,7 +55,7 @@
 
 <script>
 (function () {
-  var grid = document.querySelector(".galeria-grid");
+  var grids = document.querySelectorAll(".galeria-grid");
   var lightbox = document.getElementById("galeria-lightbox");
   var lightboxImg = lightbox.querySelector("img");
   var closeBtn = lightbox.querySelector(".galeria-lightbox-close");
@@ -55,9 +73,11 @@
     document.body.style.overflow = "";
   }
 
-  grid.addEventListener("click", function (e) {
-    var item = e.target.closest(".galeria-item");
-    if (item) open(item);
+  grids.forEach(function (grid) {
+    grid.addEventListener("click", function (e) {
+      var item = e.target.closest(".galeria-item");
+      if (item) open(item);
+    });
   });
 
   closeBtn.addEventListener("click", close);
