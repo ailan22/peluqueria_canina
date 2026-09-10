@@ -56,6 +56,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
 
 {{ with resources.Get "images/apple-touch-icon.png" }}<link rel="apple-touch-icon" sizes="180x180" href="{{ .RelPermalink }}" />{{ end }}
 {{ with resources.Get "images/favicon.svg" }}<link rel="icon" type="image/svg+xml" href="{{ .RelPermalink }}" />{{ end }}
@@ -136,13 +137,13 @@ button[id^="popover-btn-"] {
     padding: 12px 28px;
   }
 
-  #site-head .benefits .subheadline-text {
-    font-size: 1.8rem;
+  #site-head .benefits .subheadline-img {
+    max-width: 460px;
   }
 
   #blog-logo {
-    width: 240px;
-    height: 240px;
+    width: 250px;
+    height: 250px;
   }
 
   /* Deja más ancho el bloque del encabezado para que las tarjetas
@@ -151,6 +152,44 @@ button[id^="popover-btn-"] {
     max-width: 1080px;
   }
 }
+</style>
+
+{{- /* Fuente manuscrita (estilo firma) para el título "Pekes".
+       Allura: fuente de Google Fonts, gratuita y libre para uso comercial. */ -}}
+<style>
+  #site-head .blog-title,
+  #site-head.withCenteredImage .blog-title {
+    font-family: 'Allura', 'Segoe Script', 'Brush Script MT', cursive;
+    letter-spacing: normal;
+    font-weight: 400;
+    /* El script rinde más chico ópticamente: compensamos el tamaño */
+    font-size: 8.5rem;
+  }
+
+  /* Subtítulo como imagen: la imagen ya trae su propio marco y fondo,
+     así que quitamos el "pill" (fondo rosa + borde punteado) del contenedor */
+  #site-head .blog-description .benefits {
+    background-color: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+    letter-spacing: normal !important;
+  }
+
+  #site-head .blog-description .subheadline-img {
+    display: block;
+    width: 100%;
+    max-width: 340px;
+    height: auto;
+    margin: 8px auto 0;
+  }
+
+  @media (min-width: 1131px) {
+    #site-head .blog-title,
+    #site-head.withCenteredImage .blog-title {
+      font-size: 9rem;
+      letter-spacing: normal;
+    }
+  }
 </style>
 
 {{- /* Fondo decorativo (mismo que el home) para las páginas de Servicios y tarifas, Contacto y Galería */ -}}

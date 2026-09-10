@@ -12,8 +12,8 @@ header_logo: "images/logo.png"
 header_headline: "''Pekes''"
 header_subheadline: <div class="benefits">
                         <div class="subheadline-text">
-                            Resaltamos la <b>belleza</b> y el <b>cuidado</b> de tu mascota <br>                        
-                        </div>                                            
+                            <img src="/images/description_home.png" alt="Resaltamos la belleza y el cuidado de tu mascota" class="subheadline-img">
+                        </div>
                     </div>
 
 # Add a 'Go back to top' item to the navigation menu
