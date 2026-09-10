@@ -9,7 +9,7 @@ header_use_video: false
 header_logo: "images/logo.png"
 #
 # Headers are safeHTML, you can use HTML tags such as b,i,u,br
-header_headline: "''Pekes''"
+header_headline: ""
 header_subheadline: <div class="benefits">
                         <div class="subheadline-text">
                             <img src="/images/description_home.png" alt="Resaltamos la belleza y el cuidado de tu mascota" class="subheadline-img">
