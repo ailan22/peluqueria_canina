@@ -1,0 +1,183 @@
+.price-calc {
+  /* Paleta compartida con las tarjetas del home */
+  --calc-lavender: #e8def2;
+  --calc-peach: #fbe5d7;
+  --calc-blue: #dceaf6;
+  --calc-ink: #5f5668;
+  --calc-ink-soft: #6d6870;
+  --calc-accent: #8a76ab;
+  --calc-shadow: rgba(100, 80, 120, 0.14);
+  --calc-selected-border: #c6b2e0;
+
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 2.25rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  border-radius: 24px;
+  background: linear-gradient(160deg, #f6eefb 0%, #fdf3ec 55%, #eef5fb 100%);
+  box-shadow: 0 10px 30px var(--calc-shadow);
+}
+
+.price-calc-step {
+  text-align: center;
+}
+
+.price-calc-question {
+  font-size: 1.3rem;
+  margin: 0 0 1rem;
+  color: var(--calc-ink);
+}
+
+.price-calc-step--enter {
+  animation: price-calc-enter 0.35s ease;
+}
+
+@keyframes price-calc-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.price-calc-options {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.price-calc-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-width: 110px;
+  padding: 1rem 1.2rem;
+  border: 2px solid #ece7f3;
+  border-radius: 14px;
+  background: #fff;
+  color: var(--calc-ink);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(100, 80, 120, 0.06);
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+}
+
+.price-calc-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--calc-selected-border);
+  box-shadow: 0 8px 18px var(--calc-shadow);
+}
+
+.price-calc-btn.is-selected {
+  border-color: var(--calc-selected-border);
+  background: #e8def2;
+  color: #4a4356;
+  box-shadow: 0 8px 20px var(--calc-shadow);
+}
+
+.price-calc-emoji {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.price-calc-btn--service {
+  min-width: 200px;
+  text-align: center;
+}
+
+.price-calc-service-desc {
+  max-width: 460px;
+  margin: 1rem auto 0;
+  padding: 0.85rem 1.1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--calc-selected-border);
+  color: var(--calc-ink-soft);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.price-calc-service-desc[hidden] {
+  display: none;
+}
+
+.price-calc-result {
+  margin-top: 0.5rem;
+  padding: 1.75rem 1.5rem;
+  border-radius: 16px;
+  background: #fff;
+  border: 2px dashed var(--calc-selected-border);
+  text-align: center;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.price-calc-result.is-ready {
+  background: linear-gradient(135deg, #e8def2 0%, #fbe5d7 55%, #dceaf6 100%);
+  border-style: solid;
+  border-color: #c6b2e0;
+}
+
+.price-calc-result-label {
+  margin: 0 0 0.3rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  color: var(--calc-ink-soft);
+}
+
+.price-calc-amount {
+  margin: 0;
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: #6b5b8a;
+  min-height: 3.2rem;
+}
+
+.price-calc-hint {
+  margin: 0.4rem 0 1rem;
+  color: var(--calc-ink-soft);
+  font-size: 0.95rem;
+}
+
+.price-calc-reset {
+  border: none;
+  background: none;
+  color: var(--calc-accent);
+  font-size: 1.2rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .price-calc {
+    padding: 1.75rem 1.1rem;
+  }
+
+  .price-calc-btn {
+    min-width: 90px;
+    padding: 0.8rem 0.9rem;
+    font-size: 0.9rem;
+  }
+
+  .price-calc-amount {
+    font-size: 2.1rem;
+  }
+}

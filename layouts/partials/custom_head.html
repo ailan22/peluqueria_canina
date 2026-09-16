@@ -1,6 +1,16 @@
 <!-- A partial to be overwritten by the user.
      Its content will appear before the closing </head>-tag -->
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-D67WGJZMS6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-D67WGJZMS6');
+</script>
+
 
 <!-- Custom CSS via inline styles
      You may use this template to add custom CSS to your site like so: -->
@@ -39,9 +49,14 @@
      Generated via https://favicon.io/favicon-generator/ -->
 
 <link rel="stylesheet" href="/css/booking.css">
+<link rel="stylesheet" href="/css/pricing.css">
+<link rel="stylesheet" href="/css/menu-cards.css">
+<link rel="stylesheet" href="/css/contacto.css">
+<link rel="stylesheet" href="/css/galeria.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
 
 {{ with resources.Get "images/apple-touch-icon.png" }}<link rel="apple-touch-icon" sizes="180x180" href="{{ .RelPermalink }}" />{{ end }}
 {{ with resources.Get "images/favicon.svg" }}<link rel="icon" type="image/svg+xml" href="{{ .RelPermalink }}" />{{ end }}
@@ -101,3 +116,140 @@ button[id^="popover-btn-"] {
     animation: koalendar-pulse 3s ease-in-out infinite;
 }
 </style>
+
+{{- /* Ajustes SOLO para escritorio: en el celular el tamaño ya se ve bien.
+       En PC el nombre "Pekes", el subtítulo y las tarjetas se veían muy chicos. */ -}}
+<style>
+@media (min-width: 1131px) {
+  #site-head .blog-title,
+  #site-head.withCenteredImage .blog-title {
+    font-size: 7.5rem;
+    letter-spacing: 4px;
+  }
+
+  #site-head .blog-description,
+  #site-head.withCenteredImage .blog-description {
+    font-size: 3rem;
+  }
+
+  #site-head .benefits {
+    font-size: 1.8rem !important;
+    padding: 12px 28px;
+  }
+
+  #site-head .benefits .subheadline-img {
+    max-width: 460px;
+  }
+
+  #blog-logo {
+    width: 250px;
+    height: 250px;
+  }
+
+  /* Deja más ancho el bloque del encabezado para que las tarjetas
+     (botones) no queden apretadas en pantallas grandes */
+  #site-head-content.inner {
+    max-width: 1080px;
+  }
+}
+</style>
+
+{{- /* Fuente manuscrita (estilo firma) para el título "Pekes".
+       Allura: fuente de Google Fonts, gratuita y libre para uso comercial. */ -}}
+<style>
+  #site-head .blog-title,
+  #site-head.withCenteredImage .blog-title {
+    font-family: 'Allura', 'Segoe Script', 'Brush Script MT', cursive;
+    letter-spacing: normal;
+    font-weight: 400;
+    /* El script rinde más chico ópticamente: compensamos el tamaño */
+    font-size: 8.5rem;
+  }
+
+  /* Subtítulo como imagen: la imagen ya trae su propio marco y fondo,
+     así que quitamos el "pill" (fondo rosa + borde punteado) del contenedor */
+  #site-head .blog-description .benefits {
+    background-color: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+    letter-spacing: normal !important;
+  }
+
+  #site-head .blog-description .subheadline-img {
+    display: block;
+    width: 100%;
+    max-width: 340px;
+    height: auto;
+    margin: 8px auto 0;
+  }
+
+  @media (min-width: 1131px) {
+    #site-head .blog-title,
+    #site-head.withCenteredImage .blog-title {
+      font-size: 9rem;
+      letter-spacing: normal;
+    }
+  }
+</style>
+
+{{- /* Fondo decorativo (mismo que el home) para las páginas de Servicios y tarifas, Contacto y Galería */ -}}
+{{ if or (eq .Slug "precios") (eq .Slug "contacto") (eq .Slug "galeria") }}
+{{ with resources.Get "images/fondo.jpeg" }}
+<style>
+  .page-template.page-precios,
+  .page-template.page-contacto,
+  .page-template.page-galeria {
+    background-color: #f7f0f7;
+    background-image: url('{{ .RelPermalink }}');
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+
+  /* En celular, "fixed" hace que el fondo no cubra bien la pantalla
+     (aparecen franjas blancas al mostrarse/ocultarse la barra del navegador) */
+  @media (max-width: 800px) {
+    .page-template.page-precios,
+    .page-template.page-contacto,
+    .page-template.page-galeria {
+      background-attachment: scroll;
+    }
+  }
+</style>
+{{ end }}
+{{ end }}
+
+{{- /* Página de Reserva: mantiene el fondo que tenía el modal (fondo_reserva.png) */ -}}
+{{ if eq .Slug "reserva" }}
+{{ with resources.Get "images/fondo_reserva.png" }}
+<style>
+  .page-template.page-reserva {
+    background-color: #efe7f5;
+  }
+
+  /* El título y el subtítulo ya están dibujados en la imagen de fondo */
+  .page-reserva .post-title {
+    display: none;
+  }
+
+  .page-reserva .post-content {
+    background-color: #fff;
+    background-image: url('{{ .RelPermalink }}');
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: 100% 100%;
+    border-radius: 16px;
+    /* Deja libre la franja superior donde va el título dibujado */
+    padding: 10% 1.25rem 2.5rem;
+    overflow: hidden;
+  }
+
+  @media (min-width: 700px) {
+    .page-reserva .post-content {
+      padding-top: 135px;
+    }
+  }
+</style>
+{{ end }}
+{{ end }}

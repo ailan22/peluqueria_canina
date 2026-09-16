@@ -1,0 +1,201 @@
+.menu-cards {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1080px;
+    margin: 36px auto;
+    padding: 0 15px;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+}
+
+.menu-cards * {
+    box-sizing: border-box;
+}
+
+/* =========================
+   TARJETAS
+   ========================= */
+
+.menu-card {
+    min-height: 250px;
+    padding: 24px 16px;
+
+    border-radius: 25px;
+    border: 2px solid rgba(255, 255, 255, 0.85);
+
+    text-decoration: none;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    box-shadow: 0 7px 16px rgba(100, 80, 120, 0.10);
+
+    transition: all 0.25s ease;
+}
+
+/* =========================
+   HOVER
+   ========================= */
+
+.menu-card:hover {
+    transform: translateY(-5px);
+
+    box-shadow:
+        0 12px 24px rgba(100, 80, 120, 0.18);
+}
+
+/* =========================
+   COLORES
+   ========================= */
+
+.card-lavanda {
+    background: #e8def2;
+}
+
+.card-azul {
+    background: #dceaf6;
+}
+
+.card-durazno {
+    background: #fbe5d7;
+}
+
+.card-violeta {
+    background: #efa9f8;
+}
+
+/* =========================
+   TARJETA ANCHA (Reserva)
+   ========================= */
+
+.menu-card.menu-card--wide {
+    grid-column: 1 / -1;
+    min-height: auto;
+    flex-direction: row;
+    justify-content: center;
+    gap: 22px;
+    padding-top: 22px;
+    padding-bottom: 22px;
+}
+
+.menu-card--wide .card-icon {
+    width: 72px;
+    height: 72px;
+    margin-bottom: 0;
+    font-size: 34px;
+}
+
+.menu-card--wide .card-title {
+    margin-bottom: 2px;
+}
+
+/* =========================
+   ICONO
+   ========================= */
+
+.card-icon {
+    width: 92px;
+    height: 92px;
+
+    margin-bottom: 16px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.80);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 42px;
+
+    flex-shrink: 0;
+}
+
+/* =========================
+   TITULO
+   ========================= */
+
+.card-title {
+    font-size: 25px;
+    font-weight: 500;
+    color: #625d66;
+    margin-bottom: 8px;
+}
+
+/* =========================
+   DESCRIPCIÓN
+   ========================= */
+
+.card-description {
+    font-size: 17px;
+    line-height: 1.4;
+
+    color: #6d6870;
+}
+
+/* =========================
+   TABLET
+   ========================= */
+
+@media (max-width: 800px) {
+
+    .menu-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .menu-card {
+        min-height: 190px;
+    }
+
+    .card-icon {
+        width: 65px;
+        height: 65px;
+        font-size: 30px;
+    }
+
+    .card-title {
+        font-size: 17px;
+    }
+
+    .card-description {
+        font-size: 13px;
+    }
+}
+
+/* =========================
+   CELULAR
+   ========================= */
+
+@media (max-width: 550px) {
+
+    .menu-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .menu-card {
+        min-height: 185px;
+        padding: 15px 8px;
+        border-radius: 22px;
+    }
+
+    .card-icon {
+        width: 62px;
+        height: 62px;
+        font-size: 28px;
+    }
+
+    .card-title {
+        font-size: 17px;
+    }
+
+    .card-description {
+        font-size: 13px;
+    }
+}
