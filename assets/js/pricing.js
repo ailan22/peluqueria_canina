@@ -29,9 +29,9 @@
 
   var SERVICE_DESCRIPTIONS = {
     corte_sin_volumen:
-      "Mantenemos el pelo más largo y trabajamos la forma del manto para lograr una terminación más esponjosa y estética, tanto en patas como en cuerpo.",
-    corte_con_volumen:
       "Dejamos un largo uniforme en todo el cuerpo y patas, buscando un acabado más prolijo y práctico, pero manteniendo una linda terminación.",
+    corte_con_volumen:
+      "Mantenemos el pelo más largo y trabajamos la forma del manto para lograr una terminación más esponjosa y estética, tanto en patas como en cuerpo.",
   };
 
   var selection = { pet: null, size: null, coat: null, service: null };
