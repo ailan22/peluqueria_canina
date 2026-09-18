@@ -46,7 +46,7 @@ async function sendBookingNotification(env, booking, cancelUrl, attachments) {
     return;
   }
 
-  const { name, phone, race, pickupMethod, service, notes, date, time } = booking;
+  const { ownerName, name, phone, race, pickupMethod, service, notes, date, time } = booking;
   const pickupMethodLabel =
     pickupMethod === "retiro_domicilio" ? "Solicita retiro a domicilio" : "La lleva personalmente";
 
@@ -55,7 +55,8 @@ async function sendBookingNotification(env, booking, cancelUrl, attachments) {
     subject: `Nueva reserva: ${date} ${time} - ${name}`,
     html: `
       <h2>Nueva reserva de turno</h2>
-      <p><strong>Cliente:</strong> ${name}</p>
+      <p><strong>Nombre de la persona:</strong> ${ownerName || "-"}</p>
+      <p><strong>Mascota:</strong> ${name}</p>
       <p><strong>Teléfono:</strong> ${phone || "-"}</p>
       <p><strong>Raza:</strong> ${race || "-"}</p>      
       <p><strong>Servicio:</strong> ${service || "-"}</p>
@@ -79,6 +80,18 @@ function arrayBufferToBase64(buffer) {
   }
   return btoa(binary);
 }
+// ---------- Zona horaria ----------
+
+// Argentina usa UTC-3 fijo (sin horario de verano). El Worker corre en UTC,
+// así que centralizamos acá la conversión para no repetir el offset a mano.
+const ARGENTINA_UTC_OFFSET = "-03:00";
+
+// Date cuyos getters UTC (getUTCHours, toISOString, etc.) reflejan la hora
+// de pared en Argentina, sin depender de la zona horaria del runtime.
+function nowInArgentina() {
+  return new Date(Date.now() - 3 * 60 * 60 * 1000);
+}
+
 // ---------- Disponibilidad ----------
 
 async function handleAvailability(request, env) {
@@ -89,14 +102,22 @@ async function handleAvailability(request, env) {
     return json({ error: "Parámetro 'date' inválido (usar YYYY-MM-DD)" }, 400);
   }
 
-  const dayOfWeek = new Date(date + "T00:00:00").getDay();
+  const dayOfWeek = new Date(date + "T00:00:00Z").getUTCDay();
   const hours = CONFIG.businessHours[dayOfWeek];
 
   if (!hours) {
     return json({ date, slots: [] });
   }
 
-  const allSlots = getDaySlots(hours, CONFIG.slotDurationMinutes);
+  let allSlots = getDaySlots(hours, CONFIG.slotDurationMinutes);
+
+  // Si la fecha pedida es hoy (hora Argentina), sacamos los horarios que ya pasaron.
+  const nowArg = nowInArgentina();
+  const todayArg = nowArg.toISOString().slice(0, 10);
+  if (date === todayArg) {
+    const nowHm = nowArg.toISOString().slice(11, 16);
+    allSlots = allSlots.filter((s) => s > nowHm);
+  }
 
   const { results } = await env.DB.prepare(
     "SELECT time FROM bookings WHERE date = ? AND status = 'confirmed'"
@@ -120,6 +141,7 @@ async function handleBook(request, env) {
     return json({ error: "Formulario inválido" }, 400);
   }
 
+  const ownerName = formData.get("owner_name");
   const name = formData.get("name");
   const phone = formData.get("phone");
   const race = formData.get("race");
@@ -129,6 +151,7 @@ async function handleBook(request, env) {
   const date = formData.get("date");
   const time = formData.get("time");
 
+  if (!ownerName || ownerName.trim().length < 2) return json({ error: "Nombre de la persona inválido" }, 400);
   if (!name || name.trim().length < 2) return json({ error: "Nombre inválido" }, 400);
   if (!phone || !/^\d+$/.test(phone)) return json({ error: "Teléfono inválido" }, 400);
   if (!["retiro_domicilio", "la_llevo"].includes(pickupMethod)) {
@@ -139,7 +162,9 @@ async function handleBook(request, env) {
   if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return json({ error: "Fecha inválida" }, 400);
   if (!time || !/^\d{2}:\d{2}$/.test(time)) return json({ error: "Hora inválida" }, 400);
 
-  const requestedDateTime = new Date(`${date}T${time}:00`);
+  // Se fija el offset de Argentina explícitamente: el Worker corre en UTC,
+  // así que sin esto una hora local cercana a "ahora" se leía como ya pasada.
+  const requestedDateTime = new Date(`${date}T${time}:00${ARGENTINA_UTC_OFFSET}`);
   if (requestedDateTime < new Date()) {
     return json({ error: "No se puede reservar en el pasado" }, 400);
   }
@@ -150,7 +175,7 @@ async function handleBook(request, env) {
     return json({ error: "Fecha fuera del rango permitido" }, 400);
   }
 
-  const dayOfWeek = requestedDateTime.getDay();
+  const dayOfWeek = new Date(date + "T00:00:00Z").getUTCDay();
   const hours = CONFIG.businessHours[dayOfWeek];
   if (!hours || !getDaySlots(hours).includes(time)) {
     return json({ error: "Horario fuera de atención" }, 400);
@@ -174,9 +199,9 @@ async function handleBook(request, env) {
 
   try {
     await env.DB.prepare(
-      `INSERT INTO bookings (name, email, phone, race, pickup_method, service, notes, date, time, cancel_token)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    ).bind(name.trim() || "", "", phone.trim(), race?.trim() || null, pickupMethod, service?.trim() || "", notes?.trim() || null, date, time, cancelToken).run();
+      `INSERT INTO bookings (owner_name, name, email, phone, race, pickup_method, service, notes, date, time, cancel_token)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(ownerName.trim(), name.trim() || "", "", phone.trim(), race?.trim() || null, pickupMethod, service?.trim() || "", notes?.trim() || null, date, time, cancelToken).run();
   } catch (err) {
     if (String(err.message).includes("UNIQUE")) {
       return json({ error: "Ese horario ya fue reservado, elegí otro" }, 409);
@@ -184,7 +209,7 @@ async function handleBook(request, env) {
     return json({ error: "Error al guardar la reserva" }, 500);
   }
 
-  const bookingData = { name: name.trim(), phone: phone.trim(), race: race?.trim() || "", pickupMethod, service: service?.trim() || "", notes: notes?.trim() || "", date, time };
+  const bookingData = { ownerName: ownerName.trim(), name: name.trim(), phone: phone.trim(), race: race?.trim() || "", pickupMethod, service: service?.trim() || "", notes: notes?.trim() || "", date, time };
   const cancelUrl = `${new URL(request.url).origin}/cancelar/?token=${cancelToken}`;
 
   const attachments = [];

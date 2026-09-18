@@ -3,6 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS bookings (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  owner_name TEXT,           -- nombre de la persona que reserva el turno
   name TEXT NOT NULL,
   email TEXT NOT NULL,
   phone TEXT,
