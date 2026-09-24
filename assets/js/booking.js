@@ -83,6 +83,31 @@
   }
 
   const MAX_PHOTO_BYTES = 5 * 1024 * 1024; // 5MB
+  const MAX_PHOTO_SIDE = 720; // px, lado más largo al redimensionar
+
+  // Redimensiona la imagen para que su lado más largo sea maxSide y la devuelve como JPEG
+  async function resizeImage(file, maxSide) {
+    const url = URL.createObjectURL(file);
+    try {
+      const img = await new Promise((resolve, reject) => {
+        const el = new Image();
+        el.onload = () => resolve(el);
+        el.onerror = reject;
+        el.src = url;
+      });
+      const scale = Math.min(1, maxSide / Math.max(img.naturalWidth, img.naturalHeight));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.naturalWidth * scale);
+      canvas.height = Math.round(img.naturalHeight * scale);
+      canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+      const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.85));
+      if (!blob) throw new Error("No se pudo convertir la imagen");
+      const name = (file.name || "foto").replace(/\.[^.]+$/, "") + ".jpg";
+      return new File([blob], name, { type: "image/jpeg" });
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -93,18 +118,24 @@
       return;
     }
 
-    const photo1 = form.photo1.files[0];    
-    for (const photo of [photo1]) {
-      if (photo && photo.size > MAX_PHOTO_BYTES) {
-        statusBox.textContent = "Cada foto debe pesar menos de 5MB";
-        statusBox.className = "booking-error";
-        return;
-      }
-    }
-
     submitBtn.disabled = true;
     statusBox.textContent = "Enviando...";
     statusBox.className = "";
+
+    let photo1 = form.photo1.files[0];
+    if (photo1 && photo1.size > MAX_PHOTO_BYTES) {
+      try {
+        photo1 = await resizeImage(photo1, MAX_PHOTO_SIDE);
+      } catch (err) {
+        photo1 = null;
+      }
+      if (!photo1 || photo1.size > MAX_PHOTO_BYTES) {
+        statusBox.textContent = "No pudimos procesar la foto. Probá con otra o enviá la reserva sin foto.";
+        statusBox.className = "booking-error";
+        submitBtn.disabled = false;
+        return;
+      }
+    }
 
     const payload = new FormData();
     payload.append("owner_name", form.owner_name.value);
