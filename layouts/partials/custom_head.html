@@ -48,6 +48,14 @@
 <!-- Custom link-tags for different icons
      Generated via https://favicon.io/favicon-generator/ -->
 
+{{- /* Dimensiones de la imagen para compartir (og:image). Facebook procesa las imágenes
+       nuevas de forma asíncrona y sin estas etiquetas no la muestra en el primer share.
+       Se leen del archivo, así que se actualizan solas si se cambia la imagen. */ -}}
+{{ with site.Params.images }}{{ $share := printf "static/%s" (index . 0) }}{{ if fileExists $share }}{{ with imageConfig $share }}
+<meta property="og:image:width" content="{{ .Width }}" />
+<meta property="og:image:height" content="{{ .Height }}" />
+{{ end }}{{ end }}{{ end }}
+
 <link rel="stylesheet" href="/css/booking.css">
 <link rel="stylesheet" href="/css/pricing.css">
 <link rel="stylesheet" href="/css/menu-cards.css">
