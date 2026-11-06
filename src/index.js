@@ -42,35 +42,16 @@ async function sendEmail(env, { to, subject, html, attachments }) {
   }
 }
 
-// ---------- Enlaces de WhatsApp para avisar al cliente ----------
+// ---------- Teléfonos ----------
 
 // Convierte el teléfono del formulario (ej: 091234567) al formato internacional
-// que pide wa.me (ej: 59891234567). Asume números de Uruguay salvo que ya
-// vengan con el 598 adelante.
+// de WhatsApp (ej: 59891234567). Lo usa el bot de WhatsApp. Asume números de
+// Uruguay salvo que ya vengan con el 598 adelante.
 function toWhatsAppNumber(phone) {
   const digits = String(phone || "").replace(/\D/g, "");
   if (!digits) return null;
   if (digits.startsWith("598")) return digits;
   return `598${digits.replace(/^0+/, "")}`;
-}
-
-function buildWhatsAppUrl(phone, lines) {
-  const number = toWhatsAppNumber(phone);
-  if (!number) return null;
-  return `https://wa.me/${number}?text=${encodeURIComponent(lines.join("\n"))}`;
-}
-
-// "2026-10-31" -> "31/10/2026"
-function formatDate(date) {
-  const [year, month, day] = date.split("-");
-  return `${day}/${month}/${year}`;
-}
-
-function buildWhatsAppCancelUrl(booking) {
-  return buildWhatsAppUrl(booking.phone, [
-    `Hola ${booking.ownerName}, te avisamos que el turno de ${booking.name} del ${formatDate(booking.date)} a las ${booking.time} fue cancelado.`,
-    "Si querés coordinar otra fecha, escribinos por acá o por la web 🐶",
-  ]);
 }
 
 async function sendBookingNotification(env, booking, cancelUrl, attachments) {
@@ -347,21 +328,12 @@ async function handleCancelInfo(request, env) {
   if (!token) return json({ error: "Falta token" }, 400);
 
   const booking = await env.DB.prepare(
-    "SELECT owner_name, name, phone, service, date, time, status FROM bookings WHERE cancel_token = ?"
+    "SELECT service, date, time, status FROM bookings WHERE cancel_token = ?"
   ).bind(token).first();
 
   if (!booking) return json({ error: "Reserva no encontrada" }, 404);
 
-  const { service, date, time, status } = booking;
-  const whatsAppUrl = buildWhatsAppCancelUrl({
-    ownerName: booking.owner_name,
-    name: booking.name,
-    phone: booking.phone,
-    date,
-    time,
-  });
-
-  return json({ service, date, time, status, whatsAppUrl });
+  return json(booking);
 }
 
 async function handleCancel(request, env) {

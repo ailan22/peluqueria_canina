@@ -32,17 +32,6 @@
     margin-top: 1rem;
   }
   button:disabled { opacity: 0.6; cursor: not-allowed; }
-  .whatsapp-btn {
-    display: inline-block;
-    padding: 0.6rem 1.2rem;
-    border-radius: 4px;
-    background: #25d366;
-    color: #fff;
-    font-size: 1rem;
-    font-weight: 600;
-    text-decoration: none;
-    margin-top: 0.5rem;
-  }
   .hidden { display: none; }
   #status { margin-top: 1rem; font-weight: 600; }
   #status.success { color: #1a7f37; }
@@ -74,12 +63,8 @@
         return;
       }
 
-      const whatsAppLink = data.whatsAppUrl
-        ? `<a id="whatsapp-btn" class="whatsapp-btn" href="${data.whatsAppUrl}" target="_blank" rel="noopener">Avisar al cliente por WhatsApp</a>`
-        : "";
-
       if (data.status === "cancelled") {
-        content.innerHTML = `<div class="card"><p>Este turno ya estaba cancelado.</p>${whatsAppLink}</div>`;
+        content.innerHTML = `<div class="card"><p>Este turno ya estaba cancelado.</p></div>`;
         return;
       }
 
@@ -90,12 +75,8 @@
           <p><strong>Hora:</strong> ${data.time}</p>
           <button id="cancel-btn">Cancelar turno</button>
           <p id="status"></p>
-          ${whatsAppLink}
         </div>
       `;
-
-      const whatsAppBtn = document.getElementById("whatsapp-btn");
-      if (whatsAppBtn) whatsAppBtn.classList.add("hidden");
 
       document.getElementById("cancel-btn").addEventListener("click", cancelBooking);
     } catch (err) {
@@ -128,9 +109,6 @@
       statusBox.textContent = "Turno cancelado correctamente.";
       statusBox.className = "success";
       btn.classList.add("hidden");
-
-      const whatsAppBtn = document.getElementById("whatsapp-btn");
-      if (whatsAppBtn) whatsAppBtn.classList.remove("hidden");
     } catch (err) {
       statusBox.textContent = "Error de conexión, intentá de nuevo.";
       statusBox.className = "error";
