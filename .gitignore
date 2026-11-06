@@ -3,3 +3,4 @@ resources/
 .hugo_build_lock
 node_modules/
 .wrangler/
+/dev-build/

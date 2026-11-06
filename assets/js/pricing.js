@@ -27,6 +27,18 @@
 
   var SERVICE_ORDER = ["bano", "deslanado", "corte_sin_volumen", "corte_con_volumen", "esquila"];
 
+  // Nombres y orden vienen de data/servicios.yaml (los mismos que usa el formulario de reserva).
+  try {
+    var servicios = JSON.parse(root.getAttribute("data-servicios") || "null");
+    if (Array.isArray(servicios) && servicios.length) {
+      SERVICE_LABELS = {};
+      SERVICE_ORDER = servicios.map(function (s) {
+        SERVICE_LABELS[s.key] = s.label;
+        return s.key;
+      });
+    }
+  } catch (e) {}
+
   var SERVICE_DESCRIPTIONS = {
     corte_sin_volumen:
       "Dejamos un largo uniforme en todo el cuerpo y patas, buscando un acabado más prolijo y práctico, pero manteniendo una linda terminación.",

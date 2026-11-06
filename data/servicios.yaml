@@ -1,0 +1,15 @@
+# Servicios que se ofrecen. Fuente única para:
+#   - los checkboxes del formulario de reserva (layouts/partials/booking-form.html)
+#   - los nombres de la calculadora de precios (assets/js/pricing.js)
+# El orden de esta lista es el orden en que se muestran.
+# "key" debe coincidir con las claves de servicio de data/precios.yaml.
+- key: bano
+  label: Baño
+- key: deslanado
+  label: Baño + Deslanado
+- key: corte_sin_volumen
+  label: Baño + Corte (sin volumen)
+- key: corte_con_volumen
+  label: Baño + Corte (con volumen)
+- key: esquila
+  label: Baño + Esquila

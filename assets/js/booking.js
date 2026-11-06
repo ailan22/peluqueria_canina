@@ -14,30 +14,104 @@
   dateInput.min = today.toISOString().split("T")[0];
   dateInput.max = maxDate.toISOString().split("T")[0];
 
-  async function loadSlots() {
-    timeSelect.innerHTML = "<option>Cargando...</option>";
-    timeSelect.disabled = true;
+  const timeGrid = document.getElementById("booking-time-grid");
 
+  const timeLegend = document.getElementById("booking-time-legend");
+  const timeLegendSoon = document.getElementById("booking-time-legend-soon");
+  const timeNotice = document.getElementById("booking-time-notice");
+
+  function hideTimeNotice() {
+    if (timeNotice) timeNotice.hidden = true;
+  }
+
+  // Aviso para los horarios libres que empiezan en menos de 1 hora: no se reservan
+  // online, pero el cliente puede consultar por WhatsApp si sigue libre.
+  function showSoonNotice(time) {
+    if (!timeNotice) return;
+    const number = (timeNotice.dataset.whatsapp || "").replace(/\D/g, "");
+    const [y, m, d] = dateInput.value.split("-");
+    const text = `¡Hola! Quería saber si está libre el turno del ${d}/${m}/${y} a las ${time} hs 🐶`;
+    const link = number
+      ? `<a class="time-notice-btn" href="https://wa.me/${number}?text=${encodeURIComponent(text)}" target="_blank" rel="noopener">Consultar por WhatsApp</a>`
+      : "";
+    timeNotice.innerHTML =
+      `<p>⏰ Falta menos de 1 hora para el turno de las <strong>${time}</strong>, así que no se puede reservar online.</p>` +
+      `<p>Si querés ese horario, escribinos por WhatsApp y te confirmamos si está libre.</p>` +
+      link;
+    timeNotice.hidden = false;
+  }
+
+  function showTimeMessage(text) {
+    timeSelect.value = "";
+    hideTimeNotice();
+    if (timeLegend) timeLegend.hidden = true;
+    timeGrid.innerHTML = `<span class="time-grid-msg">${text}</span>`;
+  }
+
+  async function loadSlots() {
+    timeSelect.value = "";
     const date = dateInput.value;
-    if (!date) return;
+    if (!date) {
+      showTimeMessage("Elegí una fecha primero");
+      return;
+    }
+    showTimeMessage("Cargando...");
 
     try {
       const res = await fetch(`/api/availability?date=${date}`);
       const data = await res.json();
 
-      if (!data.slots || data.slots.length === 0) {
-        timeSelect.innerHTML = "<option value=''>Sin horarios disponibles</option>";
+      // allSlots trae todos los horarios con su estado; si no viene, usamos slots (solo libres)
+      const slots = data.allSlots || (data.slots || []).map((time) => ({ time, available: true }));
+
+      if (slots.length === 0) {
+        showTimeMessage("Sin horarios disponibles");
         return;
       }
 
-      timeSelect.innerHTML = data.slots
-        .map((s) => `<option value="${s}">${s}</option>`)
+      timeGrid.innerHTML = slots
+        .map((s) => {
+          if (s.available) {
+            return `<button type="button" class="time-slot time-slot--free" data-time="${s.time}" aria-pressed="false">${s.time}</button>`;
+          }
+          if (s.status === "soon") {
+            return `<button type="button" class="time-slot time-slot--soon" data-time="${s.time}" title="Falta menos de 1 hora: consultar por WhatsApp">${s.time}</button>`;
+          }
+          const title = s.status === "past" ? "Este horario ya pasó" : "Ocupado";
+          return `<button type="button" class="time-slot time-slot--busy" disabled title="${title}">${s.time}</button>`;
+        })
         .join("");
-      timeSelect.disabled = false;
+      if (timeLegend) timeLegend.hidden = false;
+      if (timeLegendSoon) timeLegendSoon.hidden = !slots.some((s) => s.status === "soon");
     } catch (e) {
-      timeSelect.innerHTML = "<option value=''>Error al cargar horarios</option>";
+      showTimeMessage("Error al cargar horarios");
     }
   }
+
+  timeGrid.addEventListener("click", (e) => {
+    const soonBtn = e.target.closest(".time-slot--soon");
+    if (soonBtn) {
+      // No se puede elegir: deseleccionamos lo que hubiera y mostramos el aviso.
+      timeGrid.querySelectorAll(".time-slot--selected").forEach((b) => {
+        b.classList.remove("time-slot--selected");
+        b.setAttribute("aria-pressed", "false");
+      });
+      timeSelect.value = "";
+      showSoonNotice(soonBtn.dataset.time);
+      return;
+    }
+
+    const btn = e.target.closest(".time-slot--free");
+    if (!btn) return;
+    hideTimeNotice();
+    timeGrid.querySelectorAll(".time-slot--selected").forEach((b) => {
+      b.classList.remove("time-slot--selected");
+      b.setAttribute("aria-pressed", "false");
+    });
+    btn.classList.add("time-slot--selected");
+    btn.setAttribute("aria-pressed", "true");
+    timeSelect.value = btn.dataset.time;
+  });
 
   dateInput.addEventListener("change", loadSlots);
 
@@ -112,6 +186,21 @@
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    const selectedServices = Array.from(form.querySelectorAll('input[name="service"]:checked')).map((c) => c.value);
+    if (selectedServices.length === 0) {
+      statusBox.textContent = "Elegí un servicio.";
+      statusBox.className = "booking-error";
+      document.getElementById("booking-service").scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+
+    if (!timeSelect.value) {
+      statusBox.textContent = "Elegí un horario disponible (en verde).";
+      statusBox.className = "booking-error";
+      timeGrid.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+
     if (!conditionsAccepted) {
       pendingSubmit = true;
       openConditionsModal();
@@ -143,7 +232,7 @@
     payload.append("phone", form.phone.value);
     payload.append("race", form.race.value);
     payload.append("pickup_method", form.pickup_method.value);
-    payload.append("service", form.service.value);
+    selectedServices.forEach((s) => payload.append("service", s));
     payload.append("notes", form.notes.value);
     payload.append("date", dateInput.value);
     payload.append("time", timeSelect.value);
@@ -165,7 +254,7 @@
         statusBox.textContent = `¡Turno confirmado para el ${data.date} a las ${data.time}!`;
         statusBox.className = "booking-success";
         form.reset();
-        timeSelect.innerHTML = "<option value=''>Elegí una fecha primero</option>";
+        showTimeMessage("Elegí una fecha primero");
         if (typeof window.showBookingSuccess === "function") {
           window.showBookingSuccess(`Te esperamos el ${data.date} a las ${data.time} hs.`);
         }

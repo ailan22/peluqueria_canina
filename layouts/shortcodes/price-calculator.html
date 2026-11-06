@@ -1,5 +1,5 @@
 {{ $data := .Site.Data.precios }}
-<div class="price-calc" id="price-calc" data-precios='{{ $data | jsonify }}'>
+<div class="price-calc" id="price-calc" data-precios='{{ $data | jsonify }}' data-servicios='{{ .Site.Data.servicios | jsonify }}'>
 
   <div class="price-calc-step" data-step="pet">
     <h3 class="price-calc-question">¿Qué mascota tenés?</h3>

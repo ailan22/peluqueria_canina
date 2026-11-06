@@ -1,6 +1,9 @@
 <div class="booking-widget">
-  <form id="booking-form">
+  <form id="booking-form">    
     <h2 style="text-align: center;">Reservar turno</h2>
+    <section class="booking-section">
+      <h3 class="booking-section-title"><span class="booking-section-num">1</span>Tus datos y los de tu mascota</h3>
+
     <div class="form-row">
       <label for="booking-owner-name">
         <img src="/images/persona.png" alt="" class="label-icon">
@@ -30,46 +33,80 @@
       <input type="race" id="booking-race" placeholder="Ej: caniche, bulldog, pastor alemán..." name="race" />
     </div>
 
-    <div class="form-row">
-      <label for="booking-service">
-        <img src="/images/mensaje.png" alt="" class="label-icon">
-        Servicio</label>      
-      <textarea rows="3" style="font-size: x-small;" type="service" id="booking-service" placeholder="Contanos en detalle que servicio necesitás, baño, corte, esquila, deslanado, etc." name="service" ></textarea>
+    </section>
+
+    <section class="booking-section">
+      <h3 class="booking-section-title"><span class="booking-section-num">2</span>Servicio</h3>
+
+    <div class="form-row">      
+      <div id="booking-service" class="service-grid" role="radiogroup" aria-labelledby="booking-service-label">
+        {{ range .Site.Data.servicios }}
+        <label class="service-option">
+          <input type="radio" name="service" value="{{ .label }}" />
+          <span>{{ .label }}</span>
+        </label>
+        {{ end }}
+      </div>
     </div>
+
+    </section>
+
+    <section class="booking-section">
+      <h3 class="booking-section-title"><span class="booking-section-num">3</span>Día y horario</h3>
 
     <div class="form-row-inline">    
       <div class="form-row">
         <label for="booking-date">
           <img src="/images/fecha.png" alt="" class="label-icon">
-          Fecha</label>
+          Fechas</label>
         <input type="date" id="booking-date" name="date" required />
       </div>
     
       <div class="form-row">
-        <label for="booking-time">
+        <label id="booking-time-label">
           <img src="/images/horario.png" alt="" class="label-icon">
-          Horario</label>
-        <select id="booking-time" name="time" required disabled>
-          <option value="">Elegí una fecha primero</option>
-        </select>
+          Horarios</label>
+        <input type="hidden" id="booking-time" name="time" value="" />
+        <div id="booking-time-grid" class="time-grid" role="group" aria-labelledby="booking-time-label">
+          <span class="time-grid-msg">Elegí una fecha primero</span>
+        </div>
+        <p id="booking-time-legend" class="time-legend" hidden>
+          <span class="time-legend-item"><span class="time-legend-dot time-legend-dot--free"></span>Disponibles</span>
+          <span class="time-legend-item"><span class="time-legend-dot time-legend-dot--busy"></span>Ocupados</span>
+          <span id="booking-time-legend-soon" class="time-legend-item" hidden><span class="time-legend-dot time-legend-dot--soon"></span>Consultar por WhatsApp</span>
+        </p>
+        <div id="booking-time-notice" class="time-notice" data-whatsapp="59892417342" role="status" hidden></div>        
       </div>    
     </div>
 
+    </section>
+
+    <section class="booking-section">
+      <h3 class="booking-section-title"><span class="booking-section-num">4</span>Traslado</h3>
+
     <div class="form-row">
-      <label for="booking-traslate">
+      <label id="booking-pickup-label">
       <img src="/images/traslado.png" alt="" class="label-icon">
       ¿Cómo llegará tu mascota a la peluquería?</label>
-      <div class="radio-group">
-        <label class="radio-option">
+      <div class="service-grid pickup-grid" role="radiogroup" aria-labelledby="booking-pickup-label">
+        <label class="service-option">
           <input type="radio" name="pickup_method" value="retiro_domicilio" required />
-          Solicito retiro a domicilio (desde $100 hasta $450, dependiendo la distancia)
+          <span>
+            Solicito retiro a domicilio
+            <small class="service-option-note">Desde $100 hasta $450, dependiendo la distancia</small>
+          </span>
         </label>
-        <label class="radio-option">
+        <label class="service-option">
           <input type="radio" name="pickup_method" value="la_llevo" required />
-          La llevo personalmente
+          <span>La llevo personalmente</span>
         </label>
       </div>
     </div>
+
+    </section>
+
+    <section class="booking-section">
+      <h3 class="booking-section-title"><span class="booking-section-num">5</span>Sobre tu mascota</h3>
 
     <div class="form-row">
       <label for="booking-notes">
@@ -88,6 +125,8 @@
     <p class="upload-subtitle">
       Para una mejor atención, se agradece si podés enviarnos una foto actual de tu mascota.
     </p>
+
+    </section>
 
     <button type="submit">Confirmar reserva</button>
     <p id="booking-status" style="text-align: center;"></p>    

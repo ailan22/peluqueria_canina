@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS bookings (
   time TEXT NOT NULL,        -- formato HH:MM (24h)
   status TEXT NOT NULL DEFAULT 'confirmed', -- confirmed | cancelled
   cancel_token TEXT,         -- token único para que el cliente cancele su turno
+  google_event_id TEXT,      -- id del evento en Google Calendar (si está configurado)
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 
@@ -26,3 +27,11 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_slot
 CREATE INDEX IF NOT EXISTS idx_date ON bookings (date);
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_cancel_token ON bookings (cancel_token);
+
+-- Conversaciones en curso del bot de WhatsApp (ver src/whatsapp.js)
+CREATE TABLE IF NOT EXISTS whatsapp_sessions (
+  phone TEXT PRIMARY KEY,    -- número del cliente en formato internacional (ej: 59891234567)
+  step TEXT NOT NULL,        -- en qué paso de la conversación está
+  data TEXT NOT NULL DEFAULT '{}', -- JSON con lo que fue respondiendo
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);

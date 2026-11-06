@@ -70,7 +70,7 @@ enableEmoji = true
 
     # Decoración de Halloween en el home (murciélagos, telaraña, sombrero en el logo, etc.).
     # Aunque quede en true, solo se ve en octubre y hasta el 2 de noviembre.
-    halloween = true
+    halloween = false
 
     [params.footer]
     # Show contact icons for email/phone (if specified) in the footer of the page

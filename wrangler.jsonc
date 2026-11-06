@@ -21,7 +21,47 @@
       "database_id": "b5c626dd-4a67-40d3-86fa-fff197aefca9"
     }
   ],
+  // GOOGLE_CALENDAR_ID: calendario donde se crean los turnos de producción. Tiene que estar
+  // compartido con el client_email de la cuenta de servicio con permiso "Hacer cambios en
+  // eventos". La clave se carga con `npx wrangler secret put GOOGLE_SERVICE_ACCOUNT`
+  // (ver src/google-calendar.js).
   "vars": {
-    "OWNER_EMAIL": "contacto.pelucaninapekes@gmail.com"
+    "OWNER_EMAIL": "contacto.pelucaninapekes@gmail.com",
+    "GOOGLE_CALENDAR_ID": "contacto.pelucaninapekes@gmail.com"
+  },
+  // Ambiente DEV (https://peluqueria-canina-dev.ailanquinteroh.workers.dev) para probar
+  // antes de pasar a prod. Tiene su propia base de turnos y los emails de reserva van
+  // a la casilla de pruebas (RESEND_API_KEY propia, cargada con
+  // `npx wrangler secret put RESEND_API_KEY --env dev`). Se publica con ./deploy-dev.sh
+  "env": {
+    "dev": {
+      "name": "peluqueria-canina-dev",
+      "build": {
+        "command": "hugo --gc --minify -b https://peluqueria-canina-dev.ailanquinteroh.workers.dev/ -d dev-build"
+      },
+      "assets": {
+        "directory": "./dev-build",
+        "binding": "ASSETS",
+        "not_found_handling": "404-page",
+        "run_worker_first": ["/api/*"]
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "db-turnos-dev",
+          "database_id": "dc1de68c-646f-4201-af88-2d11fb2b4c1e"
+        }
+      ],
+      // GOOGLE_CALENDAR_ID: calendario donde se crean los turnos. Tiene que estar compartido
+      // con la cuenta de servicio (secret GOOGLE_SERVICE_ACCOUNT, ver src/google-calendar.js).
+      // WHATSAPP_PHONE_NUMBER_ID: id del número de prueba de Meta (bot de reservas, ver
+      // src/whatsapp.js). Los secrets WHATSAPP_TOKEN, WHATSAPP_VERIFY_TOKEN y
+      // WHATSAPP_APP_SECRET se cargan con `npx wrangler secret put <NOMBRE> --env dev`.
+      "vars": {
+        "OWNER_EMAIL": "ailanquinteroh@gmail.com",
+        "GOOGLE_CALENDAR_ID": "ailanquinteroh@gmail.com",
+        "WHATSAPP_PHONE_NUMBER_ID": "1384273444770040"
+      }
+    }
   }
 }

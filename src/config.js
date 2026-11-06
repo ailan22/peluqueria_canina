@@ -14,13 +14,16 @@ export const CONFIG = {
     3: { slots: ["09:30", "11:00", "12:30", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00"] }, // miércoles
     4: { slots: ["09:30", "11:00", "12:30", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00"] }, // jueves
     5: { slots: ["09:30", "11:00", "12:30", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00"] }, // viernes
-    6: { slots: ["09:30", "10:00", "11:00", "11:30", "12:30", "13:30"] }, // sábado
+    6: { slots: ["09:30", "10:00", "11:00", "11:30", "12:30", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00"] }, // sábado
     // 0 (domingo) no existe = cerrado
   },
   slotDurationMinutes: 30,
   services: ["Corte", "Coloración", "Consulta"],
   // Cuántos días para adelante se puede reservar
   maxDaysAhead: 30,
+  // Anticipación mínima para reservar por la web. Los horarios libres que empiezan
+  // antes de esto no se pueden reservar online (el cliente tiene que consultar por WhatsApp).
+  minNoticeMinutes: 60,
   // Clave simple para proteger el endpoint de administración.
   // Configurala como secret real en producción (ver README).
   adminKeyEnvVar: "ADMIN_KEY",

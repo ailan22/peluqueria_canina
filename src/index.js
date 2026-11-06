@@ -1,4 +1,6 @@
 import { CONFIG, getDaySlots } from "./config.js";
+import { createCalendarEvent, deleteCalendarEvent } from "./google-calendar.js";
+import { handleWhatsAppVerify, handleWhatsAppWebhook } from "./whatsapp.js";
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -40,6 +42,37 @@ async function sendEmail(env, { to, subject, html, attachments }) {
   }
 }
 
+// ---------- Enlaces de WhatsApp para avisar al cliente ----------
+
+// Convierte el teléfono del formulario (ej: 091234567) al formato internacional
+// que pide wa.me (ej: 59891234567). Asume números de Uruguay salvo que ya
+// vengan con el 598 adelante.
+function toWhatsAppNumber(phone) {
+  const digits = String(phone || "").replace(/\D/g, "");
+  if (!digits) return null;
+  if (digits.startsWith("598")) return digits;
+  return `598${digits.replace(/^0+/, "")}`;
+}
+
+function buildWhatsAppUrl(phone, lines) {
+  const number = toWhatsAppNumber(phone);
+  if (!number) return null;
+  return `https://wa.me/${number}?text=${encodeURIComponent(lines.join("\n"))}`;
+}
+
+// "2026-10-31" -> "31/10/2026"
+function formatDate(date) {
+  const [year, month, day] = date.split("-");
+  return `${day}/${month}/${year}`;
+}
+
+function buildWhatsAppCancelUrl(booking) {
+  return buildWhatsAppUrl(booking.phone, [
+    `Hola ${booking.ownerName}, te avisamos que el turno de ${booking.name} del ${formatDate(booking.date)} a las ${booking.time} fue cancelado.`,
+    "Si querés coordinar otra fecha, escribinos por acá o por la web 🐶",
+  ]);
+}
+
 async function sendBookingNotification(env, booking, cancelUrl, attachments) {
   if (!env.OWNER_EMAIL) {
     console.log("sendBookingNotification: falta OWNER_EMAIL, se omite el envío");
@@ -65,10 +98,40 @@ async function sendBookingNotification(env, booking, cancelUrl, attachments) {
       <p><strong>Hora:</strong> ${time}</p>
       <p><strong>¿Cómo llega la mascota?:</strong> ${pickupMethodLabel}</p>
       <p>Si el cliente avisa que no puede asistir, podés cancelar el turno acá:</p>
-      <p><a href="${cancelUrl}">${cancelUrl}</a></p>
+      <p>
+        <a href="${cancelUrl}" style="display:inline-block;background:#c81e1e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">
+          Cancelar reserva
+        </a>
+      </p>
     `,
     attachments,
   });
+}
+
+// ---------- Google Calendar ----------
+
+function buildCalendarEvent(booking) {
+  const { ownerName, name, phone, race, pickupMethod, service, notes, date, time } = booking;
+  const start = new Date(`${date}T${time}:00${ARGENTINA_UTC_OFFSET}`);
+  const end = new Date(start.getTime() + CONFIG.slotDurationMinutes * 60 * 1000);
+  const pickupMethodLabel =
+    pickupMethod === "retiro_domicilio" ? "Solicita retiro a domicilio" : "La lleva personalmente";
+
+  const description = [
+    `Persona: ${ownerName || "-"}`,
+    `Teléfono: ${phone || "-"}`,
+    `Raza: ${race || "-"}`,
+    `Servicio: ${service || "-"}`,
+    `¿Cómo llega?: ${pickupMethodLabel}`,
+    `Sobre la mascota: ${notes || "-"}`,
+  ].join("\n");
+
+  return {
+    summary: `🐶 ${name} (${ownerName})`,
+    description,
+    start: { dateTime: start.toISOString() },
+    end: { dateTime: end.toISOString() },
+  };
 }
 
 function arrayBufferToBase64(buffer) {
@@ -94,6 +157,48 @@ function nowInArgentina() {
 
 // ---------- Disponibilidad ----------
 
+function todayInArgentina() {
+  return nowInArgentina().toISOString().slice(0, 10);
+}
+
+// Horarios libres de un día (YYYY-MM-DD). La usan la web y el bot de WhatsApp.
+async function getAvailableSlots(env, date) {
+  const slots = await getSlotsStatus(env, date);
+  return slots.filter((s) => s.available).map((s) => s.time);
+}
+
+// Todos los horarios del día con su estado:
+//  - status "free": libre y se puede reservar online.
+//  - status "busy": ya reservado.
+//  - status "past": ya pasó (solo pasa si la fecha es hoy).
+//  - status "soon": libre, pero empieza en menos de CONFIG.minNoticeMinutes; no se
+//    reserva online (la web le sugiere al cliente consultar por WhatsApp).
+// Ej: [{ time: "09:30", available: true, status: "free" }, ...]
+async function getSlotsStatus(env, date) {
+  const dayOfWeek = new Date(date + "T00:00:00Z").getUTCDay();
+  const hours = CONFIG.businessHours[dayOfWeek];
+
+  if (!hours) return [];
+
+  const allSlots = getDaySlots(hours, CONFIG.slotDurationMinutes);
+
+  const { results } = await env.DB.prepare(
+    "SELECT time FROM bookings WHERE date = ? AND status = 'confirmed'"
+  ).bind(date).all();
+
+  const taken = new Set(results.map((r) => r.time));
+  const now = new Date();
+  const minStart = new Date(now.getTime() + CONFIG.minNoticeMinutes * 60 * 1000);
+
+  return allSlots.map((time) => {
+    if (taken.has(time)) return { time, available: false, status: "busy" };
+    const start = new Date(`${date}T${time}:00${ARGENTINA_UTC_OFFSET}`);
+    if (start <= now) return { time, available: false, status: "past" };
+    if (start < minStart) return { time, available: false, status: "soon" };
+    return { time, available: true, status: "free" };
+  });
+}
+
 async function handleAvailability(request, env) {
   const url = new URL(request.url);
   const date = url.searchParams.get("date");
@@ -102,36 +207,87 @@ async function handleAvailability(request, env) {
     return json({ error: "Parámetro 'date' inválido (usar YYYY-MM-DD)" }, 400);
   }
 
-  const dayOfWeek = new Date(date + "T00:00:00Z").getUTCDay();
-  const hours = CONFIG.businessHours[dayOfWeek];
-
-  if (!hours) {
-    return json({ date, slots: [] });
-  }
-
-  let allSlots = getDaySlots(hours, CONFIG.slotDurationMinutes);
-
-  // Si la fecha pedida es hoy (hora Argentina), sacamos los horarios que ya pasaron.
-  const nowArg = nowInArgentina();
-  const todayArg = nowArg.toISOString().slice(0, 10);
-  if (date === todayArg) {
-    const nowHm = nowArg.toISOString().slice(11, 16);
-    allSlots = allSlots.filter((s) => s > nowHm);
-  }
-
-  const { results } = await env.DB.prepare(
-    "SELECT time FROM bookings WHERE date = ? AND status = 'confirmed'"
-  ).bind(date).all();
-
-  const taken = new Set(results.map((r) => r.time));
-  const available = allSlots.filter((s) => !taken.has(s));
-
-  return json({ date, slots: available });
+  const allSlots = await getSlotsStatus(env, date);
+  return json({
+    date,
+    slots: allSlots.filter((s) => s.available).map((s) => s.time),
+    allSlots,
+  });
 }
 
 // ---------- Crear reserva ----------
 
 const MAX_PHOTO_BYTES = 5 * 1024 * 1024; // 5MB
+
+// Valida y guarda una reserva, avisa por email y la agenda en Google Calendar.
+// La usan el formulario web y el bot de WhatsApp. Devuelve { ok: true } o { error, status }.
+async function createBooking(env, origin, fields, attachments = []) {
+  const { ownerName, name, phone, race, pickupMethod, service, notes, date, time } = fields;
+
+  if (!ownerName || ownerName.trim().length < 2) return { error: "Nombre de la persona inválido", status: 400 };
+  if (!name || name.trim().length < 2) return { error: "Nombre inválido", status: 400 };
+  if (!phone || !/^\d+$/.test(phone)) return { error: "Teléfono inválido", status: 400 };
+  if (!["retiro_domicilio", "la_llevo"].includes(pickupMethod)) {
+    return { error: "Indicá cómo llegará tu mascota", status: 400 };
+  }
+  if (service && service.length > 1000) return { error: "Descripción del servicio demasiado larga", status: 400 };
+  if (notes && notes.length > 1000) return { error: "El comentario sobre la mascota es demasiado largo", status: 400 };
+  if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: "Fecha inválida", status: 400 };
+  if (!time || !/^\d{2}:\d{2}$/.test(time)) return { error: "Hora inválida", status: 400 };
+
+  // Se fija el offset de Argentina explícitamente: el Worker corre en UTC,
+  // así que sin esto una hora local cercana a "ahora" se leía como ya pasada.
+  const requestedDateTime = new Date(`${date}T${time}:00${ARGENTINA_UTC_OFFSET}`);
+  if (requestedDateTime < new Date()) {
+    return { error: "No se puede reservar en el pasado", status: 400 };
+  }
+  if (requestedDateTime < new Date(Date.now() + CONFIG.minNoticeMinutes * 60 * 1000)) {
+    return {
+      error: "Falta menos de 1 hora para ese turno, no se puede reservar online. Escribinos por WhatsApp y te confirmamos si está libre",
+      status: 400,
+    };
+  }
+
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + CONFIG.maxDaysAhead);
+  if (requestedDateTime > maxDate) {
+    return { error: "Fecha fuera del rango permitido", status: 400 };
+  }
+
+  const dayOfWeek = new Date(date + "T00:00:00Z").getUTCDay();
+  const hours = CONFIG.businessHours[dayOfWeek];
+  if (!hours || !getDaySlots(hours).includes(time)) {
+    return { error: "Horario fuera de atención", status: 400 };
+  }
+
+  const cancelToken = crypto.randomUUID();
+
+  try {
+    await env.DB.prepare(
+      `INSERT INTO bookings (owner_name, name, email, phone, race, pickup_method, service, notes, date, time, cancel_token)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    ).bind(ownerName.trim(), name.trim() || "", "", phone.trim(), race?.trim() || null, pickupMethod, service?.trim() || "", notes?.trim() || null, date, time, cancelToken).run();
+  } catch (err) {
+    if (String(err.message).includes("UNIQUE")) {
+      return { error: "Ese horario ya fue reservado, elegí otro", status: 409 };
+    }
+    return { error: "Error al guardar la reserva", status: 500 };
+  }
+
+  const bookingData = { ownerName: ownerName.trim(), name: name.trim(), phone: phone.trim(), race: race?.trim() || "", pickupMethod, service: service?.trim() || "", notes: notes?.trim() || "", date, time };
+  const cancelUrl = `${origin}/cancelar/?token=${cancelToken}`;
+
+  // No bloqueamos la respuesta al cliente si el email tarda o falla.
+  await sendBookingNotification(env, bookingData, cancelUrl, attachments);
+
+  const eventId = await createCalendarEvent(env, buildCalendarEvent(bookingData));
+  if (eventId) {
+    await env.DB.prepare("UPDATE bookings SET google_event_id = ? WHERE cancel_token = ?")
+      .bind(eventId, cancelToken).run();
+  }
+
+  return { ok: true };
+}
 
 async function handleBook(request, env) {
   let formData;
@@ -139,46 +295,6 @@ async function handleBook(request, env) {
     formData = await request.formData();
   } catch {
     return json({ error: "Formulario inválido" }, 400);
-  }
-
-  const ownerName = formData.get("owner_name");
-  const name = formData.get("name");
-  const phone = formData.get("phone");
-  const race = formData.get("race");
-  const pickupMethod = formData.get("pickup_method");
-  const service = formData.get("service");
-  const notes = formData.get("notes");
-  const date = formData.get("date");
-  const time = formData.get("time");
-
-  if (!ownerName || ownerName.trim().length < 2) return json({ error: "Nombre de la persona inválido" }, 400);
-  if (!name || name.trim().length < 2) return json({ error: "Nombre inválido" }, 400);
-  if (!phone || !/^\d+$/.test(phone)) return json({ error: "Teléfono inválido" }, 400);
-  if (!["retiro_domicilio", "la_llevo"].includes(pickupMethod)) {
-    return json({ error: "Indicá cómo llegará tu mascota" }, 400);
-  }
-  if (service && service.length > 1000) return json({ error: "Descripción del servicio demasiado larga" }, 400);
-  if (notes && notes.length > 1000) return json({ error: "El comentario sobre la mascota es demasiado largo" }, 400);
-  if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return json({ error: "Fecha inválida" }, 400);
-  if (!time || !/^\d{2}:\d{2}$/.test(time)) return json({ error: "Hora inválida" }, 400);
-
-  // Se fija el offset de Argentina explícitamente: el Worker corre en UTC,
-  // así que sin esto una hora local cercana a "ahora" se leía como ya pasada.
-  const requestedDateTime = new Date(`${date}T${time}:00${ARGENTINA_UTC_OFFSET}`);
-  if (requestedDateTime < new Date()) {
-    return json({ error: "No se puede reservar en el pasado" }, 400);
-  }
-
-  const maxDate = new Date();
-  maxDate.setDate(maxDate.getDate() + CONFIG.maxDaysAhead);
-  if (requestedDateTime > maxDate) {
-    return json({ error: "Fecha fuera del rango permitido" }, 400);
-  }
-
-  const dayOfWeek = new Date(date + "T00:00:00Z").getUTCDay();
-  const hours = CONFIG.businessHours[dayOfWeek];
-  if (!hours || !getDaySlots(hours).includes(time)) {
-    return json({ error: "Horario fuera de atención" }, 400);
   }
 
   const photos = [];
@@ -195,23 +311,6 @@ async function handleBook(request, env) {
     }
   }
 
-  const cancelToken = crypto.randomUUID();
-
-  try {
-    await env.DB.prepare(
-      `INSERT INTO bookings (owner_name, name, email, phone, race, pickup_method, service, notes, date, time, cancel_token)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
-    ).bind(ownerName.trim(), name.trim() || "", "", phone.trim(), race?.trim() || null, pickupMethod, service?.trim() || "", notes?.trim() || null, date, time, cancelToken).run();
-  } catch (err) {
-    if (String(err.message).includes("UNIQUE")) {
-      return json({ error: "Ese horario ya fue reservado, elegí otro" }, 409);
-    }
-    return json({ error: "Error al guardar la reserva" }, 500);
-  }
-
-  const bookingData = { ownerName: ownerName.trim(), name: name.trim(), phone: phone.trim(), race: race?.trim() || "", pickupMethod, service: service?.trim() || "", notes: notes?.trim() || "", date, time };
-  const cancelUrl = `${new URL(request.url).origin}/cancelar/?token=${cancelToken}`;
-
   const attachments = [];
   for (let i = 0; i < photos.length; i++) {
     const buffer = await photos[i].arrayBuffer();
@@ -221,9 +320,22 @@ async function handleBook(request, env) {
     });
   }
 
-  // No bloqueamos la respuesta al cliente si el email tarda o falla.
-  await sendBookingNotification(env, bookingData, cancelUrl, attachments);
+  const date = formData.get("date");
+  const time = formData.get("time");
+  const result = await createBooking(env, new URL(request.url).origin, {
+    ownerName: formData.get("owner_name"),
+    name: formData.get("name"),
+    phone: formData.get("phone"),
+    race: formData.get("race"),
+    pickupMethod: formData.get("pickup_method"),
+    // Los checkboxes mandan un "service" por cada uno marcado; se guardan juntos como texto.
+    service: formData.getAll("service").map((s) => String(s).trim()).filter(Boolean).join(", "),
+    notes: formData.get("notes"),
+    date,
+    time,
+  }, attachments);
 
+  if (result.error) return json({ error: result.error }, result.status);
   return json({ ok: true, message: "Reserva confirmada", date, time });
 }
 
@@ -235,12 +347,21 @@ async function handleCancelInfo(request, env) {
   if (!token) return json({ error: "Falta token" }, 400);
 
   const booking = await env.DB.prepare(
-    "SELECT service, date, time, status FROM bookings WHERE cancel_token = ?"
+    "SELECT owner_name, name, phone, service, date, time, status FROM bookings WHERE cancel_token = ?"
   ).bind(token).first();
 
   if (!booking) return json({ error: "Reserva no encontrada" }, 404);
 
-  return json(booking);
+  const { service, date, time, status } = booking;
+  const whatsAppUrl = buildWhatsAppCancelUrl({
+    ownerName: booking.owner_name,
+    name: booking.name,
+    phone: booking.phone,
+    date,
+    time,
+  });
+
+  return json({ service, date, time, status, whatsAppUrl });
 }
 
 async function handleCancel(request, env) {
@@ -255,7 +376,7 @@ async function handleCancel(request, env) {
   if (!token) return json({ error: "Falta token" }, 400);
 
   const booking = await env.DB.prepare(
-    "SELECT status FROM bookings WHERE cancel_token = ?"
+    "SELECT status, google_event_id FROM bookings WHERE cancel_token = ?"
   ).bind(token).first();
 
   if (!booking) return json({ error: "Reserva no encontrada" }, 404);
@@ -266,6 +387,8 @@ async function handleCancel(request, env) {
   await env.DB.prepare(
     "UPDATE bookings SET status = 'cancelled' WHERE cancel_token = ?"
   ).bind(token).run();
+
+  await deleteCalendarEvent(env, booking.google_event_id);
 
   return json({ ok: true });
 }
@@ -291,13 +414,57 @@ async function handleBookingsList(request, env) {
   return json({ bookings: results });
 }
 
+// Agenda de un día para la dueña: todos los horarios de atención, con los datos
+// del cliente en los que están reservados.
+async function handleAgenda(request, env) {
+  if (!checkAuth(request, env)) return json({ error: "No autorizado" }, 401);
+
+  const url = new URL(request.url);
+  const date = url.searchParams.get("date");
+  if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    return json({ error: "Parámetro 'date' inválido (usar YYYY-MM-DD)" }, 400);
+  }
+
+  const dayOfWeek = new Date(date + "T00:00:00Z").getUTCDay();
+  const daySlots = getDaySlots(CONFIG.businessHours[dayOfWeek]);
+
+  const { results } = await env.DB.prepare(
+    `SELECT owner_name, name, phone, race, pickup_method, service, notes, time
+     FROM bookings WHERE date = ? AND status = 'confirmed'`
+  ).bind(date).all();
+
+  const byTime = new Map(results.map((b) => [b.time, b]));
+  // Incluimos también reservas en horarios que ya no están en la config.
+  const times = [...new Set([...daySlots, ...byTime.keys()])].sort();
+
+  const slots = times.map((time) => {
+    const b = byTime.get(time);
+    if (!b) return { time, booked: false };
+    return {
+      time,
+      booked: true,
+      ownerName: b.owner_name,
+      name: b.name,
+      phone: b.phone,
+      race: b.race,
+      pickupMethod: b.pickup_method,
+      service: b.service,
+      notes: b.notes,
+    };
+  });
+
+  return json({ date, open: daySlots.length > 0, slots });
+}
+
 async function handleBookingsDelete(request, env) {
   if (!checkAuth(request, env)) return json({ error: "No autorizado" }, 401);
 
   const { id } = await request.json();
   if (!id) return json({ error: "Falta id" }, 400);
 
+  const booking = await env.DB.prepare("SELECT google_event_id FROM bookings WHERE id = ?").bind(id).first();
   await env.DB.prepare(`UPDATE bookings SET status = 'cancelled' WHERE id = ?`).bind(id).run();
+  await deleteCalendarEvent(env, booking?.google_event_id);
 
   return json({ ok: true });
 }
@@ -326,12 +493,30 @@ export default {
       return handleBookingsDelete(request, env);
     }
 
+    if (pathname === "/api/agenda" && method === "GET") {
+      return handleAgenda(request, env);
+    }
+
     if (pathname === "/api/cancel" && method === "GET") {
       return handleCancelInfo(request, env);
     }
 
     if (pathname === "/api/cancel" && method === "POST") {
       return handleCancel(request, env);
+    }
+
+    // Bot de WhatsApp (webhook de Meta). Solo responde si WHATSAPP_TOKEN está
+    // configurado, hoy únicamente en el ambiente DEV.
+    if (pathname === "/api/whatsapp" && env.WHATSAPP_TOKEN) {
+      if (method === "GET") return handleWhatsAppVerify(request, env);
+      if (method === "POST") {
+        return handleWhatsAppWebhook(request, env, ctx, {
+          getAvailableSlots,
+          createBooking,
+          todayInArgentina,
+          toWhatsAppNumber,
+        });
+      }
     }
 
     // Cualquier otra ruta bajo /api/* que no matchee: 404 JSON
