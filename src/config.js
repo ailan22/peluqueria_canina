@@ -21,6 +21,14 @@ export const CONFIG = {
   services: ["Corte", "Coloración", "Consulta"],
   // Cuántos días para adelante se puede reservar
   maxDaysAhead: 30,
+  // Además de los `maxDaysAhead`, se puede reservar como mínimo hasta esta fecha
+  // (YYYY-MM-DD). Sirve para abrir la agenda de un mes entero (ej: diciembre).
+  bookableUntil: "2026-12-31",
+  // Feriados: esos días no se atiende y no se puede reservar (YYYY-MM-DD → nombre).
+  holidays: {
+    "2026-12-25": "Navidad",
+    "2027-01-01": "Año Nuevo",
+  },
   // Anticipación mínima para reservar por la web. Los horarios libres que empiezan
   // antes de esto no se pueden reservar online (el cliente tiene que consultar por WhatsApp).
   minNoticeMinutes: 60,
@@ -28,6 +36,20 @@ export const CONFIG = {
   // Configurala como secret real en producción (ver README).
   adminKeyEnvVar: "ADMIN_KEY",
 };
+
+// Nombre del feriado si la fecha (YYYY-MM-DD) es feriado, o null.
+export function getHoliday(date) {
+  return CONFIG.holidays[date] || null;
+}
+
+// Última fecha reservable (YYYY-MM-DD): la mayor entre hoy + maxDaysAhead y
+// `bookableUntil`. `today` es la fecha de hoy en Argentina (YYYY-MM-DD).
+export function getMaxBookingDate(today) {
+  const d = new Date(today + "T00:00:00Z");
+  d.setUTCDate(d.getUTCDate() + CONFIG.maxDaysAhead);
+  const byDays = d.toISOString().slice(0, 10);
+  return CONFIG.bookableUntil && CONFIG.bookableUntil > byDays ? CONFIG.bookableUntil : byDays;
+}
 
 // Devuelve la lista de horarios disponibles para un día, ya sea que esté
 // definido con start/end (auto-generado) o con una lista fija de `slots`.
