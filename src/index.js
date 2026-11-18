@@ -1,4 +1,4 @@
-import { CONFIG, getDaySlots } from "./config.js";
+import { CONFIG, getDaySlots, getHoliday, getMaxBookingDate } from "./config.js";
 import { createCalendarEvent, deleteCalendarEvent } from "./google-calendar.js";
 import { handleWhatsAppVerify, handleWhatsAppWebhook } from "./whatsapp.js";
 
@@ -159,7 +159,7 @@ async function getSlotsStatus(env, date) {
   const dayOfWeek = new Date(date + "T00:00:00Z").getUTCDay();
   const hours = CONFIG.businessHours[dayOfWeek];
 
-  if (!hours) return [];
+  if (!hours || getHoliday(date)) return [];
 
   const allSlots = getDaySlots(hours, CONFIG.slotDurationMinutes);
 
@@ -186,6 +186,11 @@ async function handleAvailability(request, env) {
 
   if (!date || !/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     return json({ error: "Parámetro 'date' inválido (usar YYYY-MM-DD)" }, 400);
+  }
+
+  const holiday = getHoliday(date);
+  if (holiday) {
+    return json({ date, holiday, slots: [], allSlots: [] });
   }
 
   const allSlots = await getSlotsStatus(env, date);
@@ -229,10 +234,13 @@ async function createBooking(env, origin, fields, attachments = []) {
     };
   }
 
-  const maxDate = new Date();
-  maxDate.setDate(maxDate.getDate() + CONFIG.maxDaysAhead);
-  if (requestedDateTime > maxDate) {
+  if (date > getMaxBookingDate(todayInArgentina())) {
     return { error: "Fecha fuera del rango permitido", status: 400 };
+  }
+
+  const holiday = getHoliday(date);
+  if (holiday) {
+    return { error: `Ese día es feriado (${holiday}), no atendemos`, status: 400 };
   }
 
   const dayOfWeek = new Date(date + "T00:00:00Z").getUTCDay();

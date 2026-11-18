@@ -7,12 +7,15 @@
   const submitBtn = form.querySelector("button[type=submit]");
   const statusBox = document.getElementById("booking-status");
 
-  // Limitar el date picker a hoy .. hoy+30 días
+  // Limitar el date picker a hoy .. hoy+30 días (o hasta BOOKABLE_UNTIL si es más tarde).
+  // Mantener en sincronía con maxDaysAhead / bookableUntil de src/config.js.
+  const BOOKABLE_UNTIL = "2026-12-31";
   const today = new Date();
   const maxDate = new Date();
   maxDate.setDate(today.getDate() + 30);
+  const maxByDays = maxDate.toISOString().split("T")[0];
   dateInput.min = today.toISOString().split("T")[0];
-  dateInput.max = maxDate.toISOString().split("T")[0];
+  dateInput.max = BOOKABLE_UNTIL > maxByDays ? BOOKABLE_UNTIL : maxByDays;
 
   const timeGrid = document.getElementById("booking-time-grid");
 
@@ -60,6 +63,11 @@
     try {
       const res = await fetch(`/api/availability?date=${date}`);
       const data = await res.json();
+
+      if (data.holiday) {
+        showTimeMessage(`Feriado (${data.holiday}): ese día no atendemos`);
+        return;
+      }
 
       // allSlots trae todos los horarios con su estado; si no viene, usamos slots (solo libres)
       const slots = data.allSlots || (data.slots || []).map((time) => ({ time, available: true }));
