@@ -54,6 +54,28 @@ function toWhatsAppNumber(phone) {
   return `598${digits.replace(/^0+/, "")}`;
 }
 
+// Link de WhatsApp (wa.me) al número del cliente con el mensaje para confirmar
+// el turno ya escrito. La dueña lo abre desde el email y lo puede editar antes de mandar.
+function buildConfirmWhatsAppUrl(booking) {
+  const number = toWhatsAppNumber(booking.phone);
+  if (!number) return null;
+  const [y, m, d] = booking.date.split("-");
+  const lines = [
+    `Hola buenas! Recibimos tu reserva web para el *${d}/${m}/${y} a las ${booking.time}* 🛁🐶`,
+    "",
+  ];
+  if (booking.service) {
+    lines.push(`El servicio seleccionado es *${booking.service}*`, "");
+  }
+  lines.push(
+    "Para confirmar el turno solicitamos una seña de $250 que puedes abonar por medio de transferencia bancaria: ITAU 9025084 Martina Cosetti",
+    "📌colocar el referencia el nombre de la mascota.",
+    "",
+    "Te esperamos🤗"
+  );
+  return `https://wa.me/${number}?text=${encodeURIComponent(lines.join("\n"))}`;
+}
+
 async function sendBookingNotification(env, booking, cancelUrl, attachments) {
   if (!env.OWNER_EMAIL) {
     console.log("sendBookingNotification: falta OWNER_EMAIL, se omite el envío");
@@ -63,6 +85,7 @@ async function sendBookingNotification(env, booking, cancelUrl, attachments) {
   const { ownerName, name, phone, race, pickupMethod, service, notes, date, time } = booking;
   const pickupMethodLabel =
     pickupMethod === "retiro_domicilio" ? "Solicita retiro a domicilio" : "La lleva personalmente";
+  const confirmUrl = buildConfirmWhatsAppUrl(booking);
 
   await sendEmail(env, {
     to: env.OWNER_EMAIL,
@@ -78,6 +101,13 @@ async function sendBookingNotification(env, booking, cancelUrl, attachments) {
       <p><strong>Fecha:</strong> ${date}</p>
       <p><strong>Hora:</strong> ${time}</p>
       <p><strong>¿Cómo llega la mascota?:</strong> ${pickupMethodLabel}</p>
+      ${confirmUrl ? `
+      <p>Para pedirle la seña al cliente y confirmar el turno por WhatsApp:</p>
+      <p>
+        <a href="${confirmUrl}" style="display:inline-block;background:#1f9d55;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">
+          Confirmar
+        </a>
+      </p>` : ""}
       <p>Si el cliente avisa que no puede asistir, podés cancelar el turno acá:</p>
       <p>
         <a href="${cancelUrl}" style="display:inline-block;background:#c81e1e;color:#fff;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">
