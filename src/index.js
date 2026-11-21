@@ -69,7 +69,7 @@ function buildConfirmWhatsAppUrl(booking) {
   }
   lines.push(
     "Para confirmar el turno solicitamos una seña de $250 que puedes abonar por medio de transferencia bancaria: ITAU 9025084 Martina Cosetti",
-    "📌colocar el referencia el nombre de la mascota.",
+    "📌colocar en referencia el nombre de la mascota.",
     "",
     "Te esperamos🤗"
   );
