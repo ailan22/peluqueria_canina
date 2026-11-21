@@ -72,6 +72,10 @@ enableEmoji = true
     # Aunque quede en true, solo se ve en octubre y hasta el 2 de noviembre.
     halloween = false
 
+    # Decoración de Navidad en el home (luces, nieve, gorro en el logo, perrito reno, etc.).
+    # Aunque quede en true, solo se ve del 3 de noviembre al 2 de enero (para probarla: /?navidad).
+    navidad = true
+
     [params.footer]
     # Show contact icons for email/phone (if specified) in the footer of the page
     showContactIcons = false
