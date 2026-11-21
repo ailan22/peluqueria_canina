@@ -1,5 +1,5 @@
 baseURL = "https://www.pelucaninapekes.uy/"
-# Version 1.2.2
+# Version 1.3.0
 # This is a "one page"-website, so we do not need these kinds of pages...
 disableKinds = ["section", "taxonomy", "term", "RSS", "robotsTXT"]
 
