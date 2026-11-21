@@ -1,0 +1,870 @@
+{{- /* Decoración de Navidad para el home.
+       Se activa con `navidad = true` en [params] de hugo.toml y, además, solo se muestra
+       del 3 de noviembre (después de Halloween) al 2 de enero (lo decide el navegador con la fecha del visitante),
+       así que si se olvida apagarla desaparece sola.
+       Para verla fuera de fecha (pruebas): agregar ?navidad a la URL del home.
+       Todo está acá: para quitarla basta con borrar este archivo y su include en custom_body.html. */ -}}
+
+<!-- Guirnalda de luces y nieve (la arma el script de abajo dentro del encabezado) -->
+<div class="nv-deco" aria-hidden="true">
+  <svg class="nv-cable"></svg>
+  <div class="nv-luces"></div>
+  <div class="nv-nieve"></div>
+</div>
+
+<!-- Gorro de Papá Noel para el logo -->
+<template id="nv-gorro-tpl">
+  <svg class="nv-gorro" viewBox="0 0 100 80" aria-hidden="true">
+    <path d="M14 62 C18 34 40 12 64 12 C79 12 89 21 91 36 L85 38 C82 30 77 28 73 31 C79 41 81 51 83 62 Z" fill="#d94b4b"/>
+    <path d="M64 12 C79 12 89 21 91 36 L85 38 C82 30 77 28 73 31 C70 22 66 16 64 12 Z" fill="#b93a3a"/>
+    <rect x="8" y="56" width="82" height="17" rx="8.5" fill="#fffdf8"/>
+    <path d="M14 62 h70" stroke="#ece4f2" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 7"/>
+    <circle cx="89" cy="39" r="8.5" fill="#fffdf8"/>
+  </svg>
+</template>
+
+<!-- Corona navideña alrededor del logo. Coordenadas: el centro del logo es (0,0) y su borde
+     está a radio 50; el aro va a radio 57 (por fuera del logo) y el SVG mide 144% del logo. Las ramas de pino y la nieve las agrega
+     el script (en .nv-corona__ramas) para no escribir cientos de líneas a mano. -->
+<template id="nv-corona-tpl">
+  <svg class="nv-corona" viewBox="-72 -72 144 144" aria-hidden="true">
+    <defs>
+      <radialGradient id="nv-bola-roja" cx="0.35" cy="0.32" r="0.75">
+        <stop offset="0" stop-color="#ff9a8a"/>
+        <stop offset="0.45" stop-color="#c8282e"/>
+        <stop offset="1" stop-color="#7e171c"/>
+      </radialGradient>
+      <radialGradient id="nv-bola-oro" cx="0.35" cy="0.32" r="0.75">
+        <stop offset="0" stop-color="#fff3c0"/>
+        <stop offset="0.5" stop-color="#e2b444"/>
+        <stop offset="1" stop-color="#9c7419"/>
+      </radialGradient>
+      <linearGradient id="nv-oro" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#fbe7a1"/>
+        <stop offset="0.55" stop-color="#e5b84a"/>
+        <stop offset="1" stop-color="#b8892a"/>
+      </linearGradient>
+
+      <!-- Flor de Navidad (poinsettia) con hojas doradas -->
+      <g id="nv-flor">
+        <g fill="url(#nv-oro)" stroke="#b8892a" stroke-width="0.3">
+          <ellipse rx="2.6" ry="9" transform="rotate(20) translate(0 -8)"/>
+          <ellipse rx="2.6" ry="9" transform="rotate(92) translate(0 -8)"/>
+          <ellipse rx="2.6" ry="9" transform="rotate(164) translate(0 -8)"/>
+          <ellipse rx="2.6" ry="9" transform="rotate(236) translate(0 -8)"/>
+          <ellipse rx="2.6" ry="9" transform="rotate(308) translate(0 -8)"/>
+        </g>
+        <g fill="#b81f27">
+          <ellipse rx="2.8" ry="7.5" transform="rotate(0) translate(0 -6.5)"/>
+          <ellipse rx="2.8" ry="7.5" transform="rotate(60) translate(0 -6.5)"/>
+          <ellipse rx="2.8" ry="7.5" transform="rotate(120) translate(0 -6.5)"/>
+          <ellipse rx="2.8" ry="7.5" transform="rotate(180) translate(0 -6.5)"/>
+          <ellipse rx="2.8" ry="7.5" transform="rotate(240) translate(0 -6.5)"/>
+          <ellipse rx="2.8" ry="7.5" transform="rotate(300) translate(0 -6.5)"/>
+        </g>
+        <g fill="#e2383c">
+          <ellipse rx="2.2" ry="5" transform="rotate(30) translate(0 -4.5)"/>
+          <ellipse rx="2.2" ry="5" transform="rotate(102) translate(0 -4.5)"/>
+          <ellipse rx="2.2" ry="5" transform="rotate(174) translate(0 -4.5)"/>
+          <ellipse rx="2.2" ry="5" transform="rotate(246) translate(0 -4.5)"/>
+          <ellipse rx="2.2" ry="5" transform="rotate(318) translate(0 -4.5)"/>
+        </g>
+        <circle cx="-1" cy="-0.6" r="1" fill="#f4cf6a"/>
+        <circle cx="1" cy="-0.4" r="1" fill="#f4cf6a"/>
+        <circle cx="0" cy="1.1" r="1" fill="#8fae3e"/>
+      </g>
+    </defs>
+
+    <!-- base del aro y ramas de pino -->
+    <circle r="57" fill="none" stroke="#23452f" stroke-width="15"/>
+    <g class="nv-corona__ramas" stroke-linecap="round"></g>
+
+    <!-- moño blanco con borde rojo (arriba a la izquierda; a la derecha está el gorro) -->
+    <g transform="translate(-34 -48) rotate(-35)">
+      <path d="M-1 1 L-9 15 L-6 13.5 L-4.5 17 L1.5 2 Z" fill="#fffdf8" stroke="#d94b4b" stroke-width="0.7"/>
+      <path d="M1 1 L9 15 L6 13.5 L4.5 17 L-1.5 2 Z" fill="#fffdf8" stroke="#d94b4b" stroke-width="0.7"/>
+      <path d="M0 0 C-6 -10 -17 -9 -15 -1 C-14 4 -6 3 0 0 Z" fill="#fffdf8" stroke="#d94b4b" stroke-width="0.8"/>
+      <path d="M0 0 C6 -10 17 -9 15 -1 C14 4 6 3 0 0 Z" fill="#fffdf8" stroke="#d94b4b" stroke-width="0.8"/>
+      <g fill="#d94b4b">
+        <circle cx="-9" cy="-4" r="1.1"/><circle cx="-12" cy="-1" r="0.8"/>
+        <circle cx="9" cy="-4" r="1.1"/><circle cx="12" cy="-1" r="0.8"/>
+        <circle cx="-5" cy="10" r="0.9"/><circle cx="5" cy="10" r="0.9"/>
+      </g>
+      <g fill="#3d6e4a">
+        <path d="M-6 -6 l1.6 3 h-3.2 z"/><path d="M6 -6 l1.6 3 h-3.2 z"/>
+      </g>
+      <ellipse rx="2.8" ry="3.2" fill="#fffdf8" stroke="#d94b4b" stroke-width="0.8"/>
+    </g>
+
+    <!-- bayas y esferas -->
+    <g transform="translate(43 -36)">
+      <path d="M0 0 L-3 -3 M0 0 L3 -2 M0 0 L1 4" stroke="#7a3b2a" stroke-width="0.6"/>
+      <circle cx="-3" cy="-3" r="2.6" fill="url(#nv-bola-roja)"/>
+      <circle cx="3" cy="-2" r="2.6" fill="url(#nv-bola-roja)"/>
+      <circle cx="1" cy="4" r="2.6" fill="url(#nv-bola-roja)"/>
+    </g>
+    <circle cx="-56" cy="-10" r="4.6" fill="url(#nv-bola-roja)"/>
+    <circle cx="56" cy="11" r="4.6" fill="url(#nv-bola-roja)"/>
+    <circle class="nv-corona__brillo" cx="-16" cy="-55" r="3.6" fill="url(#nv-bola-oro)"/>
+    <circle class="nv-corona__brillo nv-corona__brillo--2" cx="-52" cy="21" r="3.2" fill="url(#nv-bola-oro)"/>
+    <circle class="nv-corona__brillo nv-corona__brillo--3" cx="54" cy="-18" r="3.2" fill="url(#nv-bola-oro)"/>
+
+    <!-- flores de Navidad abajo, a los costados del cartel -->
+    <use href="#nv-flor" transform="translate(-47 33) rotate(-15)"/>
+    <use href="#nv-flor" transform="translate(47 33) rotate(15)"/>
+
+    <!-- "Feliz Navidad" dorado siguiendo la curva de abajo -->
+    <path id="nv-corona-curva" d="M-55.1 14.8 A57 57 0 0 0 55.1 14.8" fill="none"/>
+    <text class="nv-corona__texto" font-size="17" text-anchor="middle" dominant-baseline="middle">
+      <textPath href="#nv-corona-curva" startOffset="50%">Feliz Navidad</textPath>
+    </text>
+  </svg>
+</template>
+
+<!-- Regalito con moño (sticker de la tarjeta Reserva) -->
+<template id="nv-regalo-tpl">
+  <svg class="nv-regalo" viewBox="0 0 64 64" aria-hidden="true">
+    <rect x="10" y="28" width="44" height="30" rx="3" fill="#e0605c"/>
+    <rect x="6" y="20" width="52" height="11" rx="3" fill="#ec7a72"/>
+    <rect x="28" y="20" width="8" height="38" fill="#f4cf6a"/>
+    <path d="M32 20 C24 6 10 10 16 19 C19 22 27 21 32 20 Z" fill="#f4cf6a"/>
+    <path d="M32 20 C40 6 54 10 48 19 C45 22 37 21 32 20 Z" fill="#f4cf6a"/>
+    <path d="M32 20 C26 12 19 12 19 16 M32 20 C38 12 45 12 45 16" fill="none" stroke="#d9ab3c" stroke-width="1.4"/>
+    <circle cx="32" cy="20" r="3.6" fill="#e5b84a"/>
+  </svg>
+</template>
+
+<!-- Adornos para el resto de las tarjetas (se eligen por el href de cada tarjeta, ver script) -->
+<!-- Bastón de caramelo (Servicios y tarifas) -->
+<template id="nv-baston-tpl">
+  <svg class="nv-adorno nv-adorno--baston" viewBox="0 0 64 64" aria-hidden="true">
+    <path d="M38 58 V24 a10 10 0 0 0 -20 0 v4" stroke="#fffdf8" stroke-width="10" stroke-linecap="round" fill="none"/>
+    <path d="M38 58 V24 a10 10 0 0 0 -20 0 v4" stroke="#e05a5a" stroke-width="10" stroke-dasharray="5 6" fill="none"/>
+    <path d="M38 40 c-8 -7 -15 -2 -11 3 c2 2 7 1 11 -3 z" fill="#5f9e6e"/>
+    <path d="M38 40 c8 -7 15 -2 11 3 c-2 2 -7 1 -11 -3 z" fill="#5f9e6e"/>
+    <path d="M38 40 l-5 9 M38 40 l5 9" stroke="#5f9e6e" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="38" cy="40" r="2.8" fill="#4b7f58"/>
+  </svg>
+</template>
+
+<!-- Esfera navideña colgando (Galería) -->
+<template id="nv-bola-tpl">
+  <svg class="nv-adorno nv-adorno--bola" viewBox="0 0 50 84" aria-hidden="true">
+    <path d="M25 0 V24" stroke="#c9a2d8" stroke-width="1.6"/>
+    <rect x="19" y="22" width="12" height="8" rx="2" fill="#e5b84a"/>
+    <circle cx="25" cy="52" r="22" fill="#a77fc9"/>
+    <path d="M4 48 Q14 42 25 48 T46 48" stroke="#fffdf8" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M5 58 Q14 64 25 58 T45 58" stroke="#f4cf6a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-dasharray="0.1 6"/>
+    <ellipse cx="17" cy="41" rx="4" ry="6" transform="rotate(30 17 41)" fill="#fff" opacity="0.45"/>
+  </svg>
+</template>
+
+<!-- Campanita con moño (Contacto) -->
+<template id="nv-campana-tpl">
+  <svg class="nv-adorno nv-adorno--campana" viewBox="0 0 64 64" aria-hidden="true">
+    <g class="nv-campana__cuerpo">
+      <circle cx="32" cy="53" r="5" fill="#d9ab3c"/>
+      <path d="M32 14 C21 14 17 25 17 34 C17 42 13 45 10 49 L54 49 C51 45 47 42 47 34 C47 25 43 14 32 14 Z" fill="#f4cf6a"/>
+      <rect x="9" y="47" width="46" height="6" rx="3" fill="#e5b84a"/>
+      <path d="M24 22 C21 27 21 34 21 40" stroke="#fff6d8" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.8"/>
+    </g>
+    <path d="M32 14 C24 4 14 8 18 15 C20 18 27 17 32 14 Z" fill="#d94b4b"/>
+    <path d="M32 14 C40 4 50 8 46 15 C44 18 37 17 32 14 Z" fill="#d94b4b"/>
+    <path d="M32 14 L25 24 M32 14 L39 24" stroke="#d94b4b" stroke-width="3.5" stroke-linecap="round"/>
+    <circle cx="32" cy="14" r="3.4" fill="#b93a3a"/>
+  </svg>
+</template>
+
+<!-- Arbolito con estrella (Tienda) -->
+<template id="nv-arbol-tpl">
+  <svg class="nv-adorno nv-adorno--arbol" viewBox="0 0 64 74" aria-hidden="true">
+    <rect x="28" y="60" width="8" height="10" rx="1.5" fill="#8a5a35"/>
+    <path d="M32 14 L50 38 H14 Z" fill="#6fae7c"/>
+    <path d="M32 26 L54 50 H10 Z" fill="#5f9e6e"/>
+    <path d="M32 38 L58 63 H6 Z" fill="#4f8d5e"/>
+    <path d="M17 48 Q32 54 46 46 M12 60 Q32 66 52 58" stroke="#f4cf6a" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="25" cy="36" r="2.6" fill="#ff6b6b"/>
+    <circle cx="40" cy="42" r="2.6" fill="#7fb8ff"/>
+    <circle cx="22" cy="55" r="2.8" fill="#e9a6ff"/>
+    <circle cx="42" cy="57" r="2.8" fill="#ff6b6b"/>
+    <path class="nv-arbol__estrella" d="M32 2 L35 10 L43 10 L36.5 15 L39 23 L32 18 L25 23 L27.5 15 L21 10 L29 10 Z" fill="#f4cf6a" stroke="#e5b84a" stroke-width="1" stroke-linejoin="round"/>
+  </svg>
+</template>
+
+<!-- Ramita de acebo para el círculo del ícono de cada tarjeta -->
+<template id="nv-acebo-tpl">
+  <svg class="nv-acebo" viewBox="0 0 44 30" aria-hidden="true">
+    <path d="M22 17 C17 9 9 6 2 8 C5 10 4 13 7 14 C5 17 8 19 11 18 C11 21 15 22 17 20 C19 21 21 19 22 17 Z" fill="#5f9e6e"/>
+    <path d="M22 17 C27 9 35 6 42 8 C39 10 40 13 37 14 C39 17 36 19 33 18 C33 21 29 22 27 20 C25 21 23 19 22 17 Z" fill="#4f8d5e"/>
+    <path d="M22 17 C16 13 10 11 5 10 M22 17 C28 13 34 11 39 10" stroke="#3f7550" stroke-width="0.9" fill="none"/>
+    <circle cx="19" cy="20" r="3.6" fill="#e04848"/>
+    <circle cx="25.5" cy="20.5" r="3.6" fill="#d23c3c"/>
+    <circle cx="22" cy="14.5" r="3.6" fill="#e85a5a"/>
+    <circle cx="21" cy="13.4" r="1" fill="#ffb3b3"/>
+  </svg>
+</template>
+
+<!-- Perrito con cuernos de reno que se asoma por el costado de la tarjeta Reserva -->
+<template id="nv-reno-tpl">
+  <svg class="nv-reno" viewBox="0 0 60 64" aria-hidden="true">
+    <g stroke="#8a5a35" stroke-width="3" stroke-linecap="round" fill="none">
+      <path d="M23 28 L16 8 M17.5 13 L9 9 M19.5 19 L11 18"/>
+      <path d="M37 28 L44 8 M42.5 13 L51 9 M40.5 19 L49 18"/>
+    </g>
+    <ellipse cx="11" cy="40" rx="6" ry="12" transform="rotate(18 11 40)" fill="#b98a5e"/>
+    <ellipse cx="49" cy="40" rx="6" ry="12" transform="rotate(-18 49 40)" fill="#b98a5e"/>
+    <ellipse cx="30" cy="40" rx="18" ry="17" fill="#ecd0a8"/>
+    <ellipse cx="30" cy="49" rx="10" ry="7.5" fill="#fbeedb"/>
+    <circle cx="23" cy="37" r="2.6" fill="#3d2b22"/>
+    <circle cx="37" cy="37" r="2.6" fill="#3d2b22"/>
+    <circle cx="23.8" cy="36.2" r="0.9" fill="#fff"/>
+    <circle cx="37.8" cy="36.2" r="0.9" fill="#fff"/>
+    <circle cx="30" cy="45.5" r="3.8" fill="#e04848"/>
+    <circle cx="28.8" cy="44.4" r="1.1" fill="#ff9c9c"/>
+    <path d="M26 52 Q30 55 34 52" fill="none" stroke="#3d2b22" stroke-width="1.4" stroke-linecap="round"/>
+  </svg>
+</template>
+
+<!-- Papá Noel en su trineo con dos renos (cruza la pantalla en lugar de las huellitas). Mira hacia la derecha;
+     cuando va hacia la izquierda se espeja con CSS. -->
+<template id="nv-trineo-tpl">
+  <svg viewBox="-6 -6 236 74" aria-hidden="true">
+    <defs>
+      <g id="nv-rv-forma">
+        <g stroke="#8a5a35" stroke-width="3" stroke-linecap="round" fill="none">
+          <path d="M9 4 L19 10 M6 5 L14 13"/>
+          <path d="M-9 4 L-20 8 M-12 3 L-22 4"/>
+          <path d="M19 -17 L16 -28 M17 -23 L11 -26 M18 -20 L24 -28"/>
+        </g>
+        <path d="M-15 -3 L-21 -7" stroke="#b98a5e" stroke-width="3" stroke-linecap="round"/>
+        <ellipse cx="0" cy="0" rx="16" ry="8" fill="#b98a5e"/>
+        <path d="M9 -4 Q13 -12 17 -16 L23 -11 Q18 -4 14 2 Z" fill="#b98a5e"/>
+        <ellipse cx="22" cy="-14" rx="7" ry="4.6" transform="rotate(-15 22 -14)" fill="#c79a6c"/>
+        <ellipse cx="16" cy="-18" rx="2.6" ry="1.4" transform="rotate(-30 16 -18)" fill="#8a5a35"/>
+        <circle cx="23" cy="-15.5" r="1.2" fill="#3d2b22"/>
+        <circle cx="29" cy="-12.5" r="2" fill="#5a3b28"/>
+        <path d="M-7 -7 Q0 -9.5 7 -7" stroke="#d94b4b" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="0" cy="-6" r="2" fill="#f4cf6a"/>
+      </g>
+    </defs>
+
+    <!-- patín y soportes del trineo -->
+    <path d="M2 54 Q-2 60 4 60 L80 60 Q92 60 94 48" stroke="#d9ab3c" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M24 52 L22 60 M66 52 L68 60" stroke="#d9ab3c" stroke-width="2.5"/>
+
+    <!-- bolsa de regalos -->
+    <circle cx="22" cy="28" r="12" fill="#a77fc9"/>
+    <path d="M17 17 L22 20 L27 17" stroke="#7d5aa0" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+    <!-- Papá Noel -->
+    <ellipse cx="50" cy="32" rx="12" ry="11" fill="#d94b4b"/>
+    <path d="M56 31 Q68 33 76 36" stroke="#d94b4b" stroke-width="5" stroke-linecap="round" fill="none"/>
+    <circle cx="77" cy="36" r="3" fill="#5f7d63"/>
+    <circle cx="54" cy="18" r="6.5" fill="#f6d2b4"/>
+    <path d="M47 18 Q47 30 55 30 Q62 28 61 18 Q58 23 54 23 Q50 23 47 18 Z" fill="#fffdf8"/>
+    <circle cx="57" cy="16.5" r="1" fill="#3d2b22"/>
+    <circle cx="60.5" cy="19" r="1.6" fill="#f0a8a0"/>
+    <path d="M47 14 Q48 5 56 5 Q62 6 62 14 Z" fill="#d94b4b"/>
+    <path d="M51 6 Q43 2 39 9 L42 10 Q46 6 53 8 Z" fill="#d94b4b"/>
+    <rect x="46" y="12" width="17" height="4" rx="2" fill="#fffdf8"/>
+    <circle cx="40" cy="10" r="3" fill="#fffdf8"/>
+
+    <!-- caja del trineo -->
+    <path d="M8 34 Q6 52 22 54 L76 54 Q90 54 92 40 L92 34 Q86 40 80 40 L18 40 Q12 40 8 34 Z" fill="#c43d3d"/>
+    <path d="M18 47 L80 47" stroke="#f4cf6a" stroke-width="2" stroke-dasharray="2 4" stroke-linecap="round"/>
+    <circle cx="92" cy="34" r="3" fill="#f4cf6a"/>
+
+    <!-- riendas y renos -->
+    <path d="M78 36 L126 42 M155 43 L178 39" stroke="#d9ab3c" stroke-width="1.6" fill="none"/>
+    <g transform="translate(140 44)"><g class="nv-rv nv-rv--2"><use href="#nv-rv-forma"/></g></g>
+    <g transform="translate(192 40)"><g class="nv-rv"><use href="#nv-rv-forma"/><circle cx="29" cy="-12.5" r="2.6" fill="#e04848"/></g></g>
+  </svg>
+</template>
+
+<style>
+  .nv-deco { display: none; }
+
+  .navidad .nv-deco {
+    display: block;
+    position: absolute;
+    inset: 0;
+    height: 100vh;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .navidad #site-head .vertical { position: relative; z-index: 2; }
+
+  /* --- Guirnalda de luces --- */
+  .nv-cable {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    overflow: visible;
+  }
+
+  .nv-cable path {
+    fill: none;
+    stroke: #5f7d63;
+    stroke-width: 2;
+  }
+
+  .nv-luz {
+    position: absolute;
+    width: 12px;
+    height: 17px;
+    margin-left: -6px;
+    border-radius: 50% 50% 46% 46% / 42% 42% 58% 58%;
+    background: var(--color);
+    box-shadow: 0 0 10px 2px var(--color);
+    transform: rotate(var(--giro, 0deg));
+    transform-origin: top center;
+    animation: nv-titila 2.4s ease-in-out infinite;
+    animation-delay: var(--retraso, 0s);
+  }
+
+  .nv-luz::before {           /* el soquetito */
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: 3px;
+    width: 6px;
+    height: 5px;
+    border-radius: 1px;
+    background: #6b7d6c;
+  }
+
+  @keyframes nv-titila {
+    0%, 100% { opacity: 1;    box-shadow: 0 0 12px 3px var(--color); }
+    50%      { opacity: 0.45; box-shadow: 0 0 2px 0 var(--color); }
+  }
+
+  /* --- Nieve --- */
+  .nv-copo {
+    position: absolute;
+    top: -20px;
+    left: var(--x);
+    width: var(--tam);
+    height: var(--tam);
+    opacity: var(--alfa);
+    animation: nv-cae var(--dur) linear infinite;
+    animation-delay: var(--retraso);
+  }
+
+  .nv-copo span {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #f3f6fc;
+    box-shadow: 0 0 3px 1px rgba(120, 135, 185, 0.55);
+    animation: nv-vaiven var(--vaiven) ease-in-out infinite alternate;
+  }
+
+  .nv-copo--estrella span {
+    background: none;
+    box-shadow: none;
+    color: #fff;
+    font-size: var(--tam);
+    line-height: 1;
+    text-shadow: 0 0 4px rgba(140, 115, 170, 0.55);
+  }
+
+  @keyframes nv-cae {
+    from { transform: translateY(0); }
+    to   { transform: translateY(calc(100vh + 40px)); }
+  }
+
+  @keyframes nv-vaiven {
+    from { transform: translateX(-14px) rotate(0deg); }
+    to   { transform: translateX(14px) rotate(90deg); }
+  }
+
+  /* --- Gorro de Papá Noel sobre el logo --- */
+  .nv-logo-wrap {
+    position: relative;
+    display: block;
+    width: max-content;
+    margin: 30px auto 36px;   /* lugar para la corona */
+  }
+
+  /* --- Corona navideña alrededor del logo --- */
+  .nv-corona {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 144%;
+    height: 144%;
+    transform: translate(-50%, -50%);
+    overflow: visible;
+    filter: drop-shadow(0 4px 8px rgba(60, 50, 80, 0.25));
+    pointer-events: none;
+  }
+
+  .nv-corona__texto {
+    font-family: 'Allura', 'Segoe Script', 'Brush Script MT', cursive;
+    fill: url(#nv-oro);
+    stroke: #4a370c;
+    stroke-width: 0.9;
+    paint-order: stroke;
+  }
+
+  .nv-corona__brillo { animation: nv-destello-bola 3s ease-in-out infinite; }
+  .nv-corona__brillo--2 { animation-delay: -1s; }
+  .nv-corona__brillo--3 { animation-delay: -2s; }
+
+  @keyframes nv-destello-bola {
+    0%, 100% { filter: none; }
+    50%      { filter: drop-shadow(0 0 2px rgba(255, 225, 130, 0.95)); }
+  }
+
+  .nv-gorro {
+    position: absolute;
+    top: -34px;
+    right: 22px;
+    width: 128px;
+    transform: rotate(20deg);
+    filter: drop-shadow(0 4px 6px rgba(100, 80, 120, 0.25));
+    pointer-events: none;
+  }
+
+  /* --- Perrito reno: vive detrás de la tarjeta Reserva y se asoma por el costado izquierdo --- */
+  .navidad .menu-cards { position: relative; }
+  .navidad .menu-card--wide { z-index: 1; }
+
+  .nv-reno {
+    position: absolute;
+    left: 22px;
+    top: 12px;
+    width: 74px;
+    z-index: 0;
+    filter: drop-shadow(0 6px 10px rgba(120, 101, 80, 0.18));
+    transform-origin: 100% 80%;
+    animation: nv-reno-asoma 9s ease-in-out infinite;
+    animation-delay: 1.5s;
+    pointer-events: none;
+  }
+
+  @keyframes nv-reno-asoma {
+    0%, 30%   { transform: translateX(0) rotate(0deg); }
+    42%       { transform: translateX(-64%) rotate(-14deg); }
+    50%       { transform: translateX(-60%) rotate(-6deg); }
+    58%       { transform: translateX(-64%) rotate(-16deg); }
+    66%       { transform: translateX(-62%) rotate(-10deg); }
+    74%, 100% { transform: translateX(0) rotate(0deg); }
+  }
+
+  /* --- Regalito en la tarjeta Reserva --- */
+  .navidad .menu-card { position: relative; }
+
+  .nv-regalo {
+    position: absolute;
+    top: -22px;
+    right: -10px;
+    width: 56px;
+    transform: rotate(12deg);
+    filter: drop-shadow(0 3px 4px rgba(100, 80, 120, 0.2));
+    transition: transform 0.25s ease;
+    pointer-events: none;
+  }
+
+  .navidad .menu-card:hover .nv-regalo {
+    animation: nv-regalo-salta 0.6s ease;
+  }
+
+  @keyframes nv-regalo-salta {
+    0%, 100% { transform: rotate(12deg); }
+    30%      { transform: rotate(-8deg) translateY(-6px) scale(1.12); }
+    60%      { transform: rotate(16deg) translateY(-2px) scale(1.05); }
+  }
+
+  /* --- Nieve acumulada en el borde de arriba de cada tarjeta --- */
+  .navidad .menu-card::before {
+    content: "";
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    height: 18px;
+    border-radius: 25px 25px 0 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 18'%3E%3Cpath d='M0 0 H120 V7 C112 7 110 13 104 13 C98 13 98 8 90 8 C84 8 83 16 76 16 C69 16 70 9 62 9 C55 9 55 13 48 13 C41 13 42 7 34 7 C27 7 27 15 20 15 C13 15 12 7 0 7 Z' fill='%23fbfdff'/%3E%3C/svg%3E") repeat-x 0 0 / 120px 18px;
+    filter: drop-shadow(0 2px 1px rgba(120, 135, 185, 0.22));
+    pointer-events: none;
+  }
+
+  /* --- Acebo en el círculo del ícono --- */
+  .navidad .menu-card .card-icon { position: relative; }
+
+  .nv-acebo {
+    position: absolute;
+    right: -12px;
+    bottom: -4px;
+    width: 40px;
+    transform: rotate(-12deg);
+    filter: drop-shadow(0 2px 2px rgba(100, 80, 120, 0.2));
+    pointer-events: none;
+  }
+
+  /* --- Adornos de las demás tarjetas (mismo lugar que el regalito de Reserva) --- */
+  .nv-adorno {
+    position: absolute;
+    top: -22px;
+    right: -10px;
+    width: 54px;
+    transform: rotate(12deg);
+    filter: drop-shadow(0 3px 4px rgba(100, 80, 120, 0.2));
+    pointer-events: none;
+  }
+
+  .navidad .menu-card:hover .nv-adorno--baston,
+  .navidad .menu-card:hover .nv-adorno--arbol {
+    animation: nv-regalo-salta 0.6s ease;
+  }
+
+  /* La esfera cuelga del borde de la tarjeta y se balancea */
+  .nv-adorno--bola {
+    top: -2px;
+    right: 22px;
+    width: 30px;
+    transform: none;
+    transform-origin: 50% 0;
+    animation: nv-balanceo 3.2s ease-in-out infinite alternate;
+  }
+
+  .navidad .menu-card:hover .nv-adorno--bola { animation-duration: 0.7s; }
+
+  @keyframes nv-balanceo {
+    from { transform: rotate(-9deg); }
+    to   { transform: rotate(9deg); }
+  }
+
+  /* La campanita "suena" al pasar el mouse */
+  .nv-campana__cuerpo { transform-box: view-box; transform-origin: 50% 22%; }
+
+  .navidad .menu-card:hover .nv-campana__cuerpo { animation: nv-ding 0.9s ease-in-out; }
+
+  @keyframes nv-ding {
+    0%, 100% { transform: rotate(0deg); }
+    15%      { transform: rotate(16deg); }
+    35%      { transform: rotate(-14deg); }
+    55%      { transform: rotate(9deg); }
+    75%      { transform: rotate(-5deg); }
+  }
+
+  /* La estrella del arbolito brilla */
+  .nv-arbol__estrella {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: nv-estrella 2.6s ease-in-out infinite;
+  }
+
+  @keyframes nv-estrella {
+    0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 215, 110, 0)); transform: scale(1); }
+    50%      { filter: drop-shadow(0 0 4px rgba(255, 215, 110, 0.95)); transform: scale(1.12); }
+  }
+
+  /* --- Trineo de Papá Noel cruzando la pantalla (en lugar de las huellitas) --- */
+  .navidad #huellitas-track { display: none; }
+
+  #nv-trineo-track {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .nv-trineo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 210px;
+    will-change: transform;
+  }
+
+  .nv-trineo--izq .nv-trineo__giro { transform: scaleX(-1); }
+
+  .nv-trineo svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    filter: drop-shadow(0 6px 8px rgba(100, 80, 120, 0.18));
+    animation: nv-trineo-flota 1.4s ease-in-out infinite alternate;
+  }
+
+  .nv-rv {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: nv-galope 0.5s ease-in-out infinite alternate;
+  }
+
+  .nv-rv--2 { animation-delay: -0.25s; }
+
+  @keyframes nv-trineo-flota {
+    from { transform: translateY(-5px) rotate(-1.5deg); }
+    to   { transform: translateY(5px) rotate(1.5deg); }
+  }
+
+  @keyframes nv-galope {
+    from { transform: translateY(-2px) rotate(-4deg); }
+    to   { transform: translateY(2px) rotate(3deg); }
+  }
+
+  /* estela de chispitas doradas */
+  .nv-chispa {
+    position: absolute;
+    color: #f4cf6a;
+    font-size: var(--tam, 12px);
+    line-height: 1;
+    text-shadow: 0 0 6px rgba(255, 215, 110, 0.9);
+    opacity: 0;
+    animation: nv-chispa 1.3s ease-out forwards;
+  }
+
+  @keyframes nv-chispa {
+    0%   { opacity: 0;    transform: translate(-50%, -50%) scale(0.4); }
+    20%  { opacity: 0.95; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0;    transform: translate(-50%, calc(-50% + 18px)) scale(0.5) rotate(90deg); }
+  }
+
+  /* --- Celular --- */
+  @media (max-width: 800px) {
+    .nv-gorro { width: 100px; top: -24px; right: 18px; }
+    .nv-logo-wrap { margin: 24px auto 28px; }
+    .nv-reno { width: 48px; left: 20px; top: 20px; }
+    .nv-trineo { width: 150px; }
+    .nv-adorno, .nv-regalo { width: 44px; top: -18px; right: -6px; }
+    .nv-adorno--bola { width: 24px; top: -2px; right: 16px; }
+    .nv-acebo { width: 32px; right: -10px; }
+  }
+
+  @media (max-width: 550px) {
+    .navidad .menu-card::before { height: 14px; border-radius: 22px 22px 0 0; background-size: 96px 14px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nv-nieve { display: none; }
+    .nv-luz, .nv-reno { animation: none !important; }
+    .nv-reno { transform: translateX(-62%) rotate(-10deg); }
+    .navidad .menu-card:hover .nv-regalo { animation: none; }
+    .nv-adorno, .nv-campana__cuerpo, .nv-arbol__estrella, .nv-corona__brillo { animation: none !important; }
+  }
+</style>
+
+<script>
+  (function () {
+    var hoy = new Date();
+    var mes = hoy.getMonth(); // 10 = noviembre, 11 = diciembre, 0 = enero
+    var dia = hoy.getDate();
+    var enFecha = (mes === 10 && dia >= 3) || mes === 11 || (mes === 0 && dia <= 2);
+    if (!enFecha && !/[?&]navidad\b/.test(location.search)) return;
+
+    var head = document.getElementById("site-head");
+    var deco = document.querySelector(".nv-deco");
+    if (!head || !deco) return;
+
+    document.documentElement.classList.add("navidad");
+    head.insertBefore(deco, head.firstChild);
+
+    var quieto = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function rand(min, max) { return min + Math.random() * (max - min); }
+
+    // --- Guirnalda: un cable con festones y una lucecita en cada punta baja ---
+    var cable = deco.querySelector(".nv-cable");
+    var luces = deco.querySelector(".nv-luces");
+    var COLORES = ["#ff6b6b", "#ffd36b", "#7fd68f", "#7fb8ff", "#e9a6ff"];
+
+    function armarGuirnalda() {
+      var w = head.clientWidth;
+      var paso = w < 800 ? 56 : 74;
+      var n = Math.max(4, Math.round(w / paso));
+      paso = w / n;
+      var caida = w < 800 ? 22 : 30;
+
+      var d = "M0 4";
+      luces.innerHTML = "";
+      for (var i = 0; i < n; i++) {
+        var x0 = i * paso, x1 = x0 + paso;
+        d += " Q" + (x0 + paso / 2) + " " + (caida * 2) + " " + x1 + " 4";
+
+        // la luz cuelga en el punto más bajo del festón
+        var luz = document.createElement("span");
+        luz.className = "nv-luz";
+        luz.style.left = (x0 + paso / 2) + "px";
+        luz.style.top = (caida + 4) + "px";
+        luz.style.setProperty("--color", COLORES[i % COLORES.length]);
+        luz.style.setProperty("--retraso", (i % 3) * 0.8 + "s");
+        luz.style.setProperty("--giro", rand(-10, 10) + "deg");
+        luces.appendChild(luz);
+      }
+      cable.setAttribute("viewBox", "0 0 " + w + " 60");
+      cable.innerHTML = '<path d="' + d + '"/>';
+    }
+
+    armarGuirnalda();
+    var anchoPrevio = head.clientWidth;
+    window.addEventListener("resize", function () {
+      if (head.clientWidth !== anchoPrevio) { anchoPrevio = head.clientWidth; armarGuirnalda(); }
+    });
+
+    // --- Gorro en el logo ---
+    var logo = document.getElementById("blog-logo");
+    var gorroTpl = document.getElementById("nv-gorro-tpl");
+    if (logo && gorroTpl) {
+      var wrap = document.createElement("span");
+      wrap.className = "nv-logo-wrap";
+      logo.parentNode.insertBefore(wrap, logo);
+      wrap.appendChild(logo);
+
+      // Corona alrededor del logo (va antes del gorro, así el gorro queda por encima)
+      var coronaTpl = document.getElementById("nv-corona-tpl");
+      if (coronaTpl) {
+        wrap.appendChild(coronaTpl.content.cloneNode(true));
+        armarRamas(wrap.querySelector(".nv-corona__ramas"));
+      }
+
+      wrap.appendChild(gorroTpl.content.cloneNode(true));
+    }
+
+    // Ramitas de pino con puntas nevadas sobre el aro de la corona (radio 57, ancho ~16)
+    function armarRamas(g) {
+      if (!g) return;
+      var VERDES = ["#2f5a3c", "#3d6e4a", "#24482f", "#4a7d56"];
+      var html = "";
+      function linea(x, y, ang, largo, color, ancho, alfa) {
+        html += '<line x1="' + x.toFixed(1) + '" y1="' + y.toFixed(1) +
+          '" x2="' + (x + Math.cos(ang) * largo).toFixed(1) + '" y2="' + (y + Math.sin(ang) * largo).toFixed(1) +
+          '" stroke="' + color + '" stroke-width="' + ancho + '"' + (alfa ? ' opacity="' + alfa + '"' : "") + "/>";
+      }
+      for (var i = 0; i < 950; i++) {
+        var a = rand(0, Math.PI * 2), r = 57 + rand(-5, 8.5);
+        linea(Math.cos(a) * r, Math.sin(a) * r, rand(0, Math.PI * 2), rand(3, 7), VERDES[i % VERDES.length], 0.7);
+      }
+      for (var j = 0; j < 260; j++) {
+        var b = rand(0, Math.PI * 2), s = 57 + rand(-4, 9);
+        linea(Math.cos(b) * s, Math.sin(b) * s, rand(0, Math.PI * 2), rand(1, 2.4), "#ffffff", 0.6, rand(0.6, 0.95).toFixed(2));
+      }
+      g.innerHTML = html;
+    }
+
+    // --- Regalito y perrito reno en la tarjeta Reserva ---
+    var reserva = document.querySelector("#site-head .menu-card:nth-child(1)");
+    var regaloTpl = document.getElementById("nv-regalo-tpl");
+    if (reserva && regaloTpl) reserva.appendChild(regaloTpl.content.cloneNode(true));
+
+    var renoTpl = document.getElementById("nv-reno-tpl");
+    if (reserva && renoTpl) reserva.parentNode.insertBefore(renoTpl.content.cloneNode(true), reserva);
+
+    // --- Acebo en el ícono de cada tarjeta y un adorno distinto en cada una ---
+    var ADORNOS = [
+      ["/precios/", "nv-baston-tpl"],
+      ["/galeria/", "nv-bola-tpl"],
+      ["/contacto/", "nv-campana-tpl"],
+      ["wa.me", "nv-arbol-tpl"]
+    ];
+    var aceboTpl = document.getElementById("nv-acebo-tpl");
+    var tarjetas = document.querySelectorAll("#site-head .menu-card");
+    for (var t = 0; t < tarjetas.length; t++) {
+      var tarjeta = tarjetas[t];
+      var icono = tarjeta.querySelector(".card-icon");
+      if (icono && aceboTpl) icono.appendChild(aceboTpl.content.cloneNode(true));
+
+      var href = tarjeta.getAttribute("href") || "";
+      for (var a = 0; a < ADORNOS.length; a++) {
+        if (href.indexOf(ADORNOS[a][0]) === -1) continue;
+        var tpl = document.getElementById(ADORNOS[a][1]);
+        if (tpl) tarjeta.appendChild(tpl.content.cloneNode(true));
+        break;
+      }
+    }
+
+    if (quieto) return;
+
+    // --- Nieve ---
+    var nieve = deco.querySelector(".nv-nieve");
+    var cantidad = window.innerWidth < 800 ? 18 : 34;
+    for (var c = 0; c < cantidad; c++) {
+      var copo = document.createElement("div");
+      var estrella = Math.random() < 0.3;
+      copo.className = "nv-copo" + (estrella ? " nv-copo--estrella" : "");
+      copo.innerHTML = estrella ? "<span>❄</span>" : "<span></span>";
+      copo.style.setProperty("--x", rand(0, 100) + "%");
+      copo.style.setProperty("--tam", (estrella ? rand(12, 20) : rand(4, 9)) + "px");
+      copo.style.setProperty("--alfa", rand(0.55, 0.95).toFixed(2));
+      copo.style.setProperty("--dur", rand(9, 18) + "s");
+      copo.style.setProperty("--retraso", -rand(0, 18) + "s");   // negativo: ya está nevando al cargar
+      copo.style.setProperty("--vaiven", rand(2, 4) + "s");
+      nieve.appendChild(copo);
+    }
+
+    // --- Papá Noel con los renos cruzando la pantalla, igual que las huellitas ---
+    var trineoTpl = document.getElementById("nv-trineo-tpl");
+    if (!trineoTpl || !document.body.animate) return;
+
+    var trineoTrack = document.createElement("div");
+    trineoTrack.id = "nv-trineo-track";
+    trineoTrack.setAttribute("aria-hidden", "true");
+    document.body.appendChild(trineoTrack);
+
+    function volar() {
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      var haciaDerecha = Math.random() < 0.5;
+
+      var el = document.createElement("div");
+      el.className = "nv-trineo" + (haciaDerecha ? "" : " nv-trineo--izq");
+      var giro = document.createElement("div");
+      giro.className = "nv-trineo__giro";
+      giro.appendChild(trineoTpl.content.cloneNode(true));
+      el.appendChild(giro);
+      trineoTrack.appendChild(el);
+
+      var ancho = el.offsetWidth;
+      var alto = el.offsetHeight;
+
+      // De un extremo al otro, casi siempre subiendo un poco
+      var x0 = haciaDerecha ? -ancho - 20 : w + 20;
+      var x1 = haciaDerecha ? w + 20 : -ancho - 20;
+      var y0 = rand(h * 0.12, h * 0.62);
+      var y1 = Math.max(10, Math.min(h - alto - 10, y0 - rand(-40, 140)));
+      var dur = rand(8000, 12000) * (w < 800 ? 0.65 : 1);
+
+      var vuelo = el.animate(
+        [
+          { transform: "translate(" + x0 + "px," + y0 + "px)" },
+          { transform: "translate(" + x1 + "px," + y1 + "px)" }
+        ],
+        { duration: dur, easing: "linear", fill: "forwards" }
+      );
+
+      // Chispitas que quedan atrás del trineo
+      var inicio = performance.now();
+      var chispas = setInterval(function () {
+        var t = (performance.now() - inicio) / dur;
+        if (t > 1) return;
+        var x = x0 + (x1 - x0) * t + (haciaDerecha ? 10 : ancho - 10);
+        var y = y0 + (y1 - y0) * t + alto * 0.75;
+        var c = document.createElement("span");
+        c.className = "nv-chispa";
+        c.textContent = Math.random() < 0.5 ? "✦" : "✧";
+        c.style.left = (x + rand(-6, 6)) + "px";
+        c.style.top = (y + rand(-8, 8)) + "px";
+        c.style.setProperty("--tam", rand(8, 14) + "px");
+        trineoTrack.appendChild(c);
+        setTimeout(function () { c.remove(); }, 1400);
+      }, 140);
+
+      vuelo.onfinish = function () {
+        clearInterval(chispas);
+        el.remove();
+        setTimeout(volar, rand(6000, 14000));
+      };
+    }
+
+    setTimeout(volar, 2000);
+  })();
+</script>

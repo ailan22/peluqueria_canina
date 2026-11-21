@@ -90,8 +90,9 @@
     function rand(min, max) { return min + Math.random() * (max - min); }
 
     function pasear() {
-      // Con la decoración de Halloween activa (home, en octubre) no salen las huellitas
-      if (document.documentElement.classList.contains("halloween")) return;
+      // Con la decoración de Halloween o Navidad activa (home, en temporada) no salen las huellitas
+      var cl = document.documentElement.classList;
+      if (cl.contains("halloween") || cl.contains("navidad")) return;
 
       var w = window.innerWidth;
       var h = window.innerHeight;
@@ -175,5 +176,6 @@
   })();
 </script>
 
-{{- /* Decoración de temporada (solo en el home). Se apaga con `halloween = false` en hugo.toml */ -}}
+{{- /* Decoraciones de temporada (solo en el home). Se apagan con `halloween = false` / `navidad = false` en hugo.toml */ -}}
 {{ if and .IsHome site.Params.halloween }}{{ partial "halloween.html" . }}{{ end }}
+{{ if and .IsHome site.Params.navidad }}{{ partial "navidad.html" . }}{{ end }}

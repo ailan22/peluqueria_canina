@@ -1,5 +1,5 @@
 baseURL = "https://www.pelucaninapekes.uy/"
-# Version 1.2.2
+# Version 1.3.0
 # This is a "one page"-website, so we do not need these kinds of pages...
 disableKinds = ["section", "taxonomy", "term", "RSS", "robotsTXT"]
 
@@ -71,6 +71,10 @@ enableEmoji = true
     # Decoración de Halloween en el home (murciélagos, telaraña, sombrero en el logo, etc.).
     # Aunque quede en true, solo se ve en octubre y hasta el 2 de noviembre.
     halloween = false
+
+    # Decoración de Navidad en el home (luces, nieve, gorro en el logo, perrito reno, etc.).
+    # Aunque quede en true, solo se ve del 3 de noviembre al 2 de enero (para probarla: /?navidad).
+    navidad = true
 
     [params.footer]
     # Show contact icons for email/phone (if specified) in the footer of the page
