@@ -96,7 +96,7 @@ Si ya tenés el repo conectado a Cloudflare Pages vía Git, con hacer push alcan
 
 ## Cómo funciona (resumen)
 
-- `GET /api/availability?date=YYYY-MM-DD` → devuelve los horarios libres de ese día, calculados a partir del horario laboral (`_config.js`) menos lo que ya está reservado en D1.
+- `GET /api/availability?date=YYYY-MM-DD` → devuelve los horarios libres de ese día, calculados a partir del horario laboral (`src/config.js`) menos lo que ya está reservado en D1.
 - `POST /api/book` → valida los datos, chequea que el horario esté dentro de lo permitido, y hace un `INSERT` en D1. Un índice único en `(date, time)` evita que dos personas reserven el mismo turno aunque se manden al mismo tiempo (condición de carrera).
 - `GET/DELETE /api/bookings` → panel simple de administración, protegido por una clave (`ADMIN_KEY`), para listar o cancelar turnos. Podés armarle una página propia después si querés algo más visual, o simplemente consultarlo con `curl`/Postman por ahora.
 
