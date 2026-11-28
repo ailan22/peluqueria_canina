@@ -71,6 +71,7 @@ function buildConfirmWhatsAppUrl(booking) {
     "Para confirmar el turno solicitamos una seña de $250 que puedes abonar por medio de transferencia bancaria: ITAU 9025084 Martina Cosetti",
     "📌colocar en referencia el nombre de la mascota.",
     "",
+    "⚠️Si tu mascota presenta pulgas y garrapatas debes darle pastilla al menos 48hrs previo a la sesión, queremos evitar focos de contagio y mantener la higiene y la salud, gracias por cuidarnos 🫂",
     "Te esperamos🤗"
   );
   return `https://wa.me/${number}?text=${encodeURIComponent(lines.join("\n"))}`;
